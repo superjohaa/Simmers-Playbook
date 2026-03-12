@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Simmer's Playbook</title>
+
+<!-- PWA essentials -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#008a7e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Simmer's Playbook">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<!-- SEO & social sharing -->
+<meta name="description" content="Discover your Simmer personality, get tailored scenarios, roll random prompts, and journal your best Sims moments.">
+<meta property="og:title" content="The Simmer's Playbook">
+<meta property="og:description" content="Find your next great Sims story. Quizzes, prompts & a journal built for Simmers.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal:       #00b4a6;
+    --teal-dark:  #008a7e;
+    --teal-light: #b2ede9;
+    --teal-pale:  #e0faf8;
+    --aqua:       #45d4cc;
+    --sky:        #74d7f7;
+    --yellow:     #ffe04b;
+    --yellow-dk:  #d4a900;
+    --pink:       #ff7eb3;
+    --pink-pale:  #ffe8f3;
+    --purple:     #9b6dff;
+    --purple-pale:#ede5ff;
+    --orange:     #ff8c42;
+    --green:      #52d68a;
+    --white:      #ffffff;
+    --off-white:  #f4fffe;
+    --panel:      #eaf9f8;
+    --ink:        #1a2e2c;
+    --mid:        #4a7570;
+    --soft:       #8fb8b4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--off-white);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpolygon points='0,0 0,20 5,15 8,24 11,23 8,14 14,14' fill='%2300b4a6' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E"), auto;
+  }
+
+  /* ── ANIMATED BACKGROUND ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 10% 10%, rgba(0,180,166,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 90% 90%, rgba(116,215,247,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,224,75,0.05) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  /* floating plumbobs in bg */
+  .bg-plumbobs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bg-pb {
+    position: absolute;
+    width: 18px; height: 18px;
+    transform: rotate(45deg);
+    border-radius: 3px;
+    opacity: 0.07;
+    animation: drift linear infinite;
+  }
+  @keyframes drift {
+    0%   { transform: rotate(45deg) translateY(0px); opacity: 0.07; }
+    50%  { opacity: 0.13; }
+    100% { transform: rotate(45deg) translateY(-120vh); opacity: 0; }
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    height: 68px;
+    background: var(--teal-dark);
+    position: sticky; top: 0; z-index: 200;
+    box-shadow: 0 4px 24px rgba(0,138,126,0.35);
+  }
+
+  .logo {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.25rem;
+    color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -0.01em;
+  }
+  .logo-pb-wrap { position: relative; width: 28px; height: 28px; }
+  .logo-pb {
+    width: 18px; height: 18px;
+    background: var(--yellow);
+    transform: rotate(45deg);
+    border-radius: 3px;
+    position: absolute; top: 5px; left: 5px;
+    box-shadow: 0 0 12px rgba(255,224,75,0.6);
+    animation: pbglow 2s ease-in-out infinite;
+  }
+  @keyframes pbglow {
+    0%,100% { box-shadow: 0 0 10px rgba(255,224,75,0.5); }
+    50%      { box-shadow: 0 0 22px rgba(255,224,75,0.9); }
+  }
+
+  .nav-links { display: flex; gap: 4px; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 700;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none; padding: 8px 14px;
+    border-radius: 8px; cursor: pointer;
+    transition: all 0.2s; letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .nav-links a:hover { background: rgba(255,255,255,0.15); color: var(--white); }
+  .nav-links a.active-nav { background: rgba(255,255,255,0.2); color: var(--yellow); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: calc(100vh - 68px); position: relative; z-index: 1; }
+  .screen.active { display: block; animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 100px;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; border: none; transition: all 0.2s ease;
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--teal); color: var(--white);
+    box-shadow: 0 4px 0 var(--teal-dark), 0 6px 20px rgba(0,180,166,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-dark), 0 10px 28px rgba(0,180,166,0.35); }
+  .btn-primary:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--teal-dark); }
+
+  .btn-yellow {
+    background: var(--yellow); color: var(--ink);
+    box-shadow: 0 4px 0 var(--yellow-dk), 0 6px 20px rgba(255,224,75,0.3);
+  }
+  .btn-yellow:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--yellow-dk), 0 10px 28px rgba(255,224,75,0.4); }
+  .btn-yellow:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--yellow-dk); }
+
+  .btn-outline {
+    background: var(--white); color: var(--teal-dark);
+    border: 2.5px solid var(--teal);
+    box-shadow: 0 4px 0 var(--teal-light);
+  }
+  .btn-outline:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-light); }
+
+  /* ══════════════════════════════════
+     HOME SCREEN
+  ══════════════════════════════════ */
+  .home-hero {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; min-height: calc(100vh - 68px);
+  }
+
+  .hero-left {
+    background: linear-gradient(160deg, var(--teal-dark) 0%, #005f58 100%);
+    padding: 70px 60px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .hero-left::before {
+    content: '';
+    position: absolute; bottom: -80px; left: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(255,224,75,0.15), transparent);
+    border-radius: 50%;
+  }
+  .hero-left::after {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(0,180,166,0.3), transparent);
+    border-radius: 50%;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,224,75,0.18); border: 1px solid rgba(255,224,75,0.35);
+    color: var(--yellow); font-size: 0.75rem; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 28px;
+    width: fit-content;
+  }
+
+  .hero-h1 {
+    font-family: 'Lora', serif;
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    font-weight: 600; line-height: 1.15;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .hero-h1 em { font-style: italic; color: var(--yellow); }
+
+  .hero-sub {
+    font-size: 1rem; color: rgba(255,255,255,0.72);
+    line-height: 1.75; margin-bottom: 40px; font-weight: 400;
+    max-width: 400px;
+  }
+
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* big plumbob illustration */
+  .hero-right {
+    background: var(--teal-pale);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px 40px; gap: 24px;
+    position: relative; overflow: hidden;
+  }
+  .hero-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent, transparent 30px,
+      rgba(0,180,166,0.04) 30px, rgba(0,180,166,0.04) 60px
+    );
+  }
+
+  .big-plumbob {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, var(--aqua) 0%, var(--teal-dark) 100%);
+    transform: rotate(45deg); border-radius: 12px;
+    box-shadow: 0 0 0 16px rgba(0,180,166,0.12), 0 20px 60px rgba(0,138,126,0.4);
+    animation: bobfloat 3s ease-in-out infinite;
+    margin-bottom: 10px;
+  }
+  @keyframes bobfloat {
+    0%,100% { transform: rotate(45deg) translateY(0); box-shadow: 0 0 0 16px rgba(0,180,166,0.12), 0 20px 60px rgba(0,138,126,0.4); }
+    50%      { transform: rotate(45deg) translateY(-14px); box-shadow: 0 0 0 20px rgba(0,180,166,0.08), 0 34px 70px rgba(0,138,126,0.3); }
+  }
+
+  .feature-pills {
+    display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
+  }
+  .feat-pill {
+    background: var(--white); border-radius: 14px;
+    padding: 16px 20px; display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 2px 12px rgba(0,138,126,0.1);
+    cursor: pointer; transition: all 0.2s ease;
+    border: 2px solid transparent;
+  }
+  .feat-pill:hover { border-color: var(--teal); transform: translateX(6px); box-shadow: 0 4px 20px rgba(0,138,126,0.18); }
+  .pill-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+  }
+  .pill-icon.teal  { background: var(--teal-pale); }
+  .pill-icon.yell  { background: #fff8d6; }
+  .pill-icon.pink  { background: var(--pink-pale); }
+  .pill-icon.purp  { background: var(--purple-pale); }
+  .pill-text h4 { font-size: 0.92rem; font-weight: 800; color: var(--ink); }
+  .pill-text p  { font-size: 0.77rem; color: var(--mid); margin-top: 2px; }
+
+  /* ══════════════════════════════════
+     QUIZ SCREEN
+  ══════════════════════════════════ */
+  .quiz-wrapper {
+    max-width: 680px; margin: 0 auto; padding: 52px 32px;
+  }
+
+  .progress-row {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 44px;
+  }
+  .progress-bar {
+    flex: 1; height: 10px; background: var(--teal-light);
+    border-radius: 100px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--yellow));
+    border-radius: 100px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .progress-label {
+    font-size: 0.8rem; font-weight: 800; color: var(--teal-dark);
+    white-space: nowrap;
+  }
+
+  .question-step { display: none; }
+  .question-step.active { display: block; animation: fadeUp 0.35s ease; }
+
+  .q-chip {
+    display: inline-block;
+    background: var(--teal); color: var(--white);
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 4px 12px; border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  .q-text {
+    font-family: 'Lora', serif;
+    font-size: 1.7rem; font-weight: 600; line-height: 1.3;
+    color: var(--ink); margin-bottom: 32px;
+  }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+
+  .option-card {
+    background: var(--white); border: 2.5px solid var(--teal-light);
+    border-radius: 16px; padding: 20px 18px;
+    cursor: pointer; transition: all 0.2s ease; text-align: left;
+    box-shadow: 0 2px 0 var(--teal-light);
+  }
+  .option-card:hover {
+    border-color: var(--teal); background: var(--teal-pale);
+    transform: translateY(-4px); box-shadow: 0 6px 0 var(--teal-light);
+  }
+  .option-card.selected {
+    border-color: var(--teal); background: var(--teal-pale);
+    box-shadow: 0 0 0 4px rgba(0,180,166,0.15), 0 4px 0 var(--teal);
+  }
+  .opt-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+  .opt-label { font-weight: 800; font-size: 0.95rem; color: var(--ink); margin-bottom: 4px; }
+  .opt-sub   { font-size: 0.78rem; color: var(--mid); line-height: 1.45; }
+
+  /* ══════════════════════════════════
+     RESULT SCREEN
+  ══════════════════════════════════ */
+  .result-wrapper { max-width: 820px; margin: 0 auto; padding: 52px 32px; }
+
+  .result-banner {
+    border-radius: 24px; padding: 44px 48px;
+    margin-bottom: 36px; position: relative; overflow: hidden;
+  }
+  .result-banner::after {
+    content: '';
+    position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .result-banner::before {
+    content: '';
+    position: absolute; right: 60px; bottom: -60px;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  .banner-teal   { background: linear-gradient(135deg, var(--teal-dark), var(--aqua)); }
+  .banner-purple { background: linear-gradient(135deg, #7c52cc, var(--purple)); }
+  .banner-orange { background: linear-gradient(135deg, #d4520a, var(--orange)); }
+  .banner-green  { background: linear-gradient(135deg, #1a8a4c, var(--green)); }
+
+  .result-eyebrow {
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(255,255,255,0.7); margin-bottom: 10px;
+  }
+  .result-type {
+    font-family: 'Lora', serif;
+    font-size: clamp(2rem, 5vw, 3rem); font-weight: 600;
+    color: var(--white); margin-bottom: 14px; line-height: 1.1;
+  }
+  .result-emoji-big { font-size: 2.8rem; margin-bottom: 10px; display: block; }
+  .result-desc {
+    font-size: 1rem; color: rgba(255,255,255,0.85);
+    line-height: 1.75; max-width: 520px; font-weight: 400;
+  }
+
+  .scenarios-head {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 18px;
+  }
+  .scenarios-head h3 {
+    font-size: 1rem; font-weight: 800; color: var(--ink); text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .scenarios-head::after {
+    content: ''; flex: 1; height: 2px;
+    background: linear-gradient(90deg, var(--teal-light), transparent);
+    border-radius: 2px;
+  }
+
+  .scenario-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+
+  .scenario-card {
+    background: var(--white); border: 2px solid var(--teal-light);
+    border-radius: 16px; padding: 22px 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+    cursor: pointer; transition: all 0.22s ease;
+    box-shadow: 0 2px 0 var(--teal-light);
+  }
+  .scenario-card:hover {
+    border-color: var(--teal);
+    transform: translateX(6px);
+    box-shadow: -6px 4px 0 var(--teal-light);
+  }
+  .sc-num {
+    font-family: 'Lora', serif; font-size: 1.6rem; font-weight: 600;
+    color: var(--teal-light); flex-shrink: 0; line-height: 1; min-width: 30px;
+  }
+  .sc-title { font-weight: 800; font-size: 1rem; color: var(--ink); margin-bottom: 5px; }
+  .sc-desc  { font-size: 0.84rem; color: var(--mid); line-height: 1.6; }
+  .sc-tag {
+    display: inline-block; margin-top: 10px;
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.07em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
+  }
+  .tag-teal   { background: var(--teal-pale);   color: var(--teal-dark); }
+  .tag-pink   { background: var(--pink-pale);    color: #b0005a; }
+  .tag-purple { background: var(--purple-pale);  color: #5a00cc; }
+  .tag-yellow { background: #fff8d6;             color: var(--yellow-dk); }
+  .tag-green  { background: #d4f5e3;             color: #1a6638; }
+  .tag-orange { background: #ffe5d0;             color: #a03800; }
+
+  .result-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ══════════════════════════════════
+     RANDOM PROMPT SCREEN
+  ══════════════════════════════════ */
+  .prompt-screen-inner {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 60px 32px;
+    min-height: calc(100vh - 68px);
+  }
+
+  .prompt-eyebrow {
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--mid); margin-bottom: 32px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .prompt-eyebrow::before, .prompt-eyebrow::after {
+    content: ''; width: 40px; height: 2px;
+    background: var(--teal-light); border-radius: 2px;
+  }
+
+  .prompt-card {
+    background: var(--white);
+    border: 3px solid var(--teal-light);
+    border-radius: 28px; padding: 44px 48px;
+    max-width: 600px; width: 100%;
+    box-shadow: 0 6px 0 var(--teal-light), 0 16px 50px rgba(0,138,126,0.1);
+    margin-bottom: 32px; text-align: center;
+    position: relative; overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .prompt-card::before {
+    content: '🎲';
+    position: absolute; top: -10px; right: 20px;
+    font-size: 5rem; opacity: 0.06;
+    transform: rotate(-15deg);
+  }
+
+  .prompt-category {
+    display: inline-block;
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--white);
+    background: var(--teal); padding: 5px 14px;
+    border-radius: 100px; margin-bottom: 20px;
+  }
+  .prompt-text {
+    font-family: 'Lora', serif; font-style: italic;
+    font-size: 1.45rem; line-height: 1.55; color: var(--ink);
+    margin-bottom: 24px;
+  }
+  .prompt-hint {
+    font-size: 0.84rem; color: var(--mid); line-height: 1.65;
+    background: var(--teal-pale); border-radius: 12px; padding: 14px 18px;
+  }
+
+  .prompt-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* spin animation on new prompt */
+  @keyframes cardFlip {
+    0%   { transform: scale(0.95) rotateY(10deg); opacity: 0.6; }
+    100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+  }
+  .prompt-card.flipping { animation: cardFlip 0.35s ease; }
+
+  /* ══════════════════════════════════
+     JOURNAL SCREEN
+  ══════════════════════════════════ */
+  .journal-wrapper { max-width: 740px; margin: 0 auto; padding: 52px 32px; }
+
+  .journal-topbar {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 36px; flex-wrap: wrap; gap: 16px;
+  }
+  .journal-title { font-family: 'Lora', serif; font-size: 2.2rem; font-weight: 600; color: var(--ink); }
+  .journal-sub { font-size: 0.88rem; color: var(--mid); margin-top: 4px; }
+
+  .streak-badge {
+    background: linear-gradient(135deg, var(--yellow), #ffbe00);
+    border-radius: 14px; padding: 12px 18px; text-align: center;
+    box-shadow: 0 4px 0 var(--yellow-dk);
+  }
+  .streak-num { font-size: 1.6rem; font-weight: 900; color: var(--ink); line-height: 1; }
+  .streak-label { font-size: 0.7rem; font-weight: 800; color: var(--ink); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .new-entry-btn {
+    display: flex; align-items: center; gap: 14px;
+    background: linear-gradient(135deg, var(--teal), var(--aqua));
+    border-radius: 18px; padding: 22px 24px; margin-bottom: 20px;
+    cursor: pointer; border: none; width: 100%;
+    transition: all 0.2s; box-shadow: 0 4px 0 var(--teal-dark);
+    text-align: left;
+  }
+  .new-entry-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-dark); }
+  .new-entry-icon {
+    width: 48px; height: 48px; background: rgba(255,255,255,0.25);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+  .new-entry-text h4 { font-size: 1rem; font-weight: 800; color: var(--white); }
+  .new-entry-text p  { font-size: 0.82rem; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+  .journal-tabs {
+    display: flex; gap: 4px; margin-bottom: 20px;
+    background: var(--teal-pale); border-radius: 12px; padding: 4px;
+  }
+  .jtab {
+    flex: 1; text-align: center; font-size: 0.8rem; font-weight: 800;
+    padding: 8px; border-radius: 9px; cursor: pointer;
+    color: var(--mid); transition: all 0.2s;
+  }
+  .jtab.active { background: var(--white); color: var(--teal-dark); box-shadow: 0 2px 8px rgba(0,138,126,0.12); }
+
+  .entry-card {
+    background: var(--white); border: 2px solid var(--teal-light);
+    border-radius: 18px; padding: 24px 26px; margin-bottom: 14px;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 0 2px 0 var(--teal-light);
+  }
+  .entry-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 5px 0 var(--teal-light); }
+
+  .entry-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .entry-date { font-size: 0.75rem; font-weight: 700; color: var(--soft); letter-spacing: 0.06em; text-transform: uppercase; }
+  .entry-sim-type {
+    font-size: 0.72rem; font-weight: 800; padding: 3px 10px;
+    border-radius: 100px; background: var(--teal-pale); color: var(--teal-dark);
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .entry-title { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+  .entry-preview { font-size: 0.86rem; color: var(--mid); line-height: 1.65; }
+
+  .mood-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+  .mood-chip {
+    font-size: 0.72rem; font-weight: 800; padding: 4px 10px;
+    border-radius: 100px; letter-spacing: 0.04em;
+  }
+  .chip-teal   { background: var(--teal-pale);   color: var(--teal-dark); }
+  .chip-yellow { background: #fff8d6;             color: var(--yellow-dk); }
+  .chip-pink   { background: var(--pink-pale);    color: #b0005a; }
+  .chip-green  { background: #d4f5e3;             color: #1a6638; }
+  .chip-purple { background: var(--purple-pale);  color: #5a00cc; }
+
+  .journal-footer {
+    text-align: center; font-size: 0.82rem; color: var(--soft);
+    margin-top: 12px; font-weight: 600;
+  }
+
+  /* ══════════════════════════════════
+     PWA INSTALL BANNER
+  ══════════════════════════════════ */
+  #installBanner {
+    display: none;
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: var(--ink);
+    border-radius: 20px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    max-width: 380px; width: calc(100% - 40px);
+    animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1);
+    border: 1.5px solid rgba(255,255,255,0.08);
+  }
+  #installBanner.visible { display: flex; align-items: center; gap: 14px; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .install-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--teal), var(--aqua));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 1.4rem;
+  }
+  .install-text { flex: 1; }
+  .install-text h4 { font-size: 0.9rem; font-weight: 800; color: var(--white); margin-bottom: 2px; }
+  .install-text p  { font-size: 0.75rem; color: rgba(255,255,255,0.55); line-height: 1.4; }
+  .install-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-install {
+    background: var(--teal); color: var(--white);
+    border: none; border-radius: 100px;
+    padding: 8px 16px; font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; font-weight: 800; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-install:hover { background: var(--aqua); transform: translateY(-1px); }
+  .btn-dismiss {
+    background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
+    border: none; border-radius: 100px;
+    padding: 8px 12px; font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-dismiss:hover { background: rgba(255,255,255,0.18); }
+
+  #iosTip {
+    display: none;
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: var(--ink);
+    border-radius: 20px; padding: 18px 22px;
+    max-width: 340px; width: calc(100% - 40px);
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    animation: slideUp 0.4s cubic-bezier(0.22,1,0.36,1);
+  }
+  #iosTip.visible { display: block; }
+  #iosTip p { font-size: 0.84rem; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  #iosTip strong { color: var(--yellow); }
+  #iosTip .ios-close {
+    margin-top: 12px; background: rgba(255,255,255,0.1);
+    border: none; border-radius: 100px; padding: 7px 18px;
+    color: rgba(255,255,255,0.6); font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem; font-weight: 700; cursor: pointer;
+  }
+
+  /* ══════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════ */
+  @media (max-width: 700px) {
+    nav { padding: 0 16px; }
+    .nav-links a { font-size: 0.72rem; padding: 6px 8px; }
+    .home-hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 48px 24px; }
+    .hero-right { padding: 40px 20px; }
+    .quiz-wrapper, .result-wrapper, .journal-wrapper { padding: 32px 18px; }
+    .options-grid { grid-template-columns: 1fr; }
+    .result-banner { padding: 28px 24px; }
+    .prompt-card { padding: 28px 24px; }
+    .prompt-text { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating bg plumbobs -->
+<div class="bg-plumbobs" id="bgPbs"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-pb-wrap"><div class="logo-pb"></div></div>
+    The Simmer's Playbook
+  </div>
+  <div class="nav-links">
+    <a onclick="showScreen('home')"   id="nav-home"   class="active-nav">Home</a>
+    <a onclick="showScreen('quiz')"   id="nav-quiz">Quiz</a>
+    <a onclick="showScreen('prompt')" id="nav-prompt">Prompts</a>
+    <a onclick="showScreen('journal')"id="nav-journal">Journal</a>
+  </div>
+</nav>
+
+<!-- ════════ HOME ════════ -->
+<div id="home" class="screen active">
+  <div class="home-hero">
+    <div class="hero-left">
+      <div class="hero-tag">✦ For Simmers who need a nudge</div>
+      <h1 class="hero-h1">Find your <em>next great</em> Sims story.</h1>
+      <p class="hero-sub">Discover your Simmer personality, unlock tailored scenarios, roll random prompts when you're stuck, and keep a journal of the moments that made your playthroughs unforgettable.</p>
+      <div class="hero-btns">
+        <button class="btn btn-yellow" onclick="showScreen('quiz')">✦ Find My Playstyle</button>
+        <button class="btn btn-outline" onclick="showScreen('prompt')">🎲 Random Prompt</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="big-plumbob"></div>
+      <div class="feature-pills">
+        <div class="feat-pill" onclick="showScreen('quiz')">
+          <div class="pill-icon teal">🎭</div>
+          <div class="pill-text">
+            <h4>Playstyle Quiz</h4>
+            <p>5 questions · Discover your Simmer type</p>
+          </div>
+        </div>
+        <div class="feat-pill" onclick="showScreen('prompt')">
+          <div class="pill-icon yell">🎲</div>
+          <div class="pill-text">
+            <h4>Random Prompts</h4>
+            <p>Shake things up mid-game, instantly</p>
+          </div>
+        </div>
+        <div class="feat-pill" onclick="showScreen('journal')">
+          <div class="pill-icon pink">📖</div>
+          <div class="pill-text">
+            <h4>Story Journal</h4>
+            <p>Log your best Sim moments forever</p>
+          </div>
+        </div>
+        <div class="feat-pill">
+          <div class="pill-icon purp">🗺️</div>
+          <div class="pill-text">
+            <h4>Scenario Library</h4>
+            <p>Curated by mood, length & playstyle</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ QUIZ ════════ -->
+<div id="quiz" class="screen">
+  <div class="quiz-wrapper">
+    <div class="progress-row">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+      <div class="progress-label" id="progressLabel">1 / 5</div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-step active" id="q1">
+      <div class="q-chip">Question 1</div>
+      <div class="q-text">When you open The Sims, what's your very first instinct?</div>
+      <div class="options-grid">
+        <div class="option-card" onclick="nextQuestion(1,'storyteller',event)">
+          <span class="opt-icon">✍️</span>
+          <div class="opt-label">Continue a story</div>
+          <div class="opt-sub">I have a Sim family I'm invested in</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(1,'builder',event)">
+          <span class="opt-icon">🏠</span>
+          <div class="opt-label">Start a build</div>
+          <div class="opt-sub">I have a design in my head I need to make real</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(1,'chaos',event)">
+          <span class="opt-icon">🔥</span>
+          <div class="opt-label">Cause some chaos</div>
+          <div class="opt-sub">I want to see what disasters I can create today</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(1,'explorer',event)">
+          <span class="opt-icon">🧭</span>
+          <div class="opt-label">Try something new</div>
+          <div class="opt-sub">I want to explore a feature I haven't touched yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-step" id="q2">
+      <div class="q-chip">Question 2</div>
+      <div class="q-text">Your Sim just moved into a new neighbourhood. What happens next?</div>
+      <div class="options-grid">
+        <div class="option-card" onclick="nextQuestion(2,'storyteller',event)">
+          <span class="opt-icon">🤝</span>
+          <div class="opt-label">I write their backstory</div>
+          <div class="opt-sub">Why did they move? Who did they leave behind?</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(2,'builder',event)">
+          <span class="opt-icon">🛋️</span>
+          <div class="opt-label">I redecorate</div>
+          <div class="opt-sub">This house is not right yet. It needs to be right.</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(2,'chaos',event)">
+          <span class="opt-icon">😈</span>
+          <div class="opt-label">I make enemies</div>
+          <div class="opt-sub">Frenemies with the neighbours by nightfall</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(2,'explorer',event)">
+          <span class="opt-icon">📋</span>
+          <div class="opt-label">I set goals</div>
+          <div class="opt-sub">Max a skill, complete an aspiration, climb a career</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-step" id="q3">
+      <div class="q-chip">Question 3</div>
+      <div class="q-text">How do you feel about Sim relationships?</div>
+      <div class="options-grid">
+        <div class="option-card" onclick="nextQuestion(3,'storyteller',event)">
+          <span class="opt-icon">💌</span>
+          <div class="opt-label">They're everything</div>
+          <div class="opt-sub">I plan complex relationship arcs in my head</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(3,'builder',event)">
+          <span class="opt-icon">🙄</span>
+          <div class="opt-label">Necessary evil</div>
+          <div class="opt-sub">I interact socially only when I absolutely have to</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(3,'chaos',event)">
+          <span class="opt-icon">💥</span>
+          <div class="opt-label">Drama fuel</div>
+          <div class="opt-sub">Affairs, betrayals, enemies-to-lovers</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(3,'explorer',event)">
+          <span class="opt-icon">🌐</span>
+          <div class="opt-label">A challenge</div>
+          <div class="opt-sub">I want to explore every relationship type in the game</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-step" id="q4">
+      <div class="q-chip">Question 4</div>
+      <div class="q-text">Your Sim dies unexpectedly. You…</div>
+      <div class="options-grid">
+        <div class="option-card" onclick="nextQuestion(4,'storyteller',event)">
+          <span class="opt-icon">😭</span>
+          <div class="opt-label">Grieve it out</div>
+          <div class="opt-sub">This becomes part of the story. I lean in.</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(4,'builder',event)">
+          <span class="opt-icon">⏪</span>
+          <div class="opt-label">Immediately reload</div>
+          <div class="opt-sub">Absolutely not. That was not the plan.</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(4,'chaos',event)">
+          <span class="opt-icon">😂</span>
+          <div class="opt-label">Screenshot it</div>
+          <div class="opt-sub">This is content. Hilarious. I'm posting this.</div>
+        </div>
+        <div class="option-card" onclick="nextQuestion(4,'explorer',event)">
+          <span class="opt-icon">🧪</span>
+          <div class="opt-label">See what happens</div>
+          <div class="opt-sub">Never done a ghost playthrough. Let's go.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-step" id="q5">
+      <div class="q-chip">Question 5</div>
+      <div class="q-text">What does your ideal Sims session feel like afterwards?</div>
+      <div class="options-grid">
+        <div class="option-card" onclick="calculateResult('storyteller',event)">
+          <span class="opt-icon">🌙</span>
+          <div class="opt-label">I felt something real</div>
+          <div class="opt-sub">Moved, surprised, or genuinely attached</div>
+        </div>
+        <div class="option-card" onclick="calculateResult('builder',event)">
+          <span class="opt-icon">✨</span>
+          <div class="opt-label">I made something beautiful</div>
+          <div class="opt-sub">I look at it and feel proud</div>
+        </div>
+        <div class="option-card" onclick="calculateResult('chaos',event)">
+          <span class="opt-icon">😅</span>
+          <div class="opt-label">I can't believe that happened</div>
+          <div class="opt-sub">Abducted, fired and married in one night</div>
+        </div>
+        <div class="option-card" onclick="calculateResult('explorer',event)">
+          <span class="opt-icon">📈</span>
+          <div class="opt-label">I made real progress</div>
+          <div class="opt-sub">Goals ticked off, things unlocked</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ RESULT ════════ -->
+<div id="result" class="screen">
+  <div class="result-wrapper">
+    <div class="result-banner" id="resultBanner">
+      <span class="result-emoji-big" id="resultEmoji">🎭</span>
+      <div class="result-eyebrow">Your Simmer Type</div>
+      <div class="result-type" id="resultType">The Storyteller</div>
+      <div class="result-desc" id="resultDesc"></div>
+    </div>
+
+    <div class="scenarios-head"><h3>✦ Your Curated Scenarios</h3></div>
+    <div class="scenario-cards" id="scenarioCards"></div>
+
+    <div class="result-btns">
+      <button class="btn btn-primary" onclick="showScreen('prompt')">🎲 Random Prompt</button>
+      <button class="btn btn-outline" onclick="showScreen('journal')">📖 Open Journal</button>
+      <button class="btn btn-outline" onclick="retakeQuiz()">↩ Retake</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PROMPTS ════════ -->
+<div id="prompt" class="screen">
+  <div class="prompt-screen-inner">
+    <div class="prompt-eyebrow">Stuck mid-game? Shake things up</div>
+    <div class="prompt-card" id="promptCard">
+      <div class="prompt-category" id="promptCategory">🌧️ Life Shake-Up</div>
+      <div class="prompt-text" id="promptText">"Your Sim was just laid off. They have §2,000, one week, and absolutely no plan. What happens next?"</div>
+      <div class="prompt-hint" id="promptHint">Try playing this without reloading no matter what happens — the best Sims stories come from the unexpected.</div>
+    </div>
+    <div class="prompt-actions">
+      <button class="btn btn-yellow" onclick="randomPrompt()">🎲 New Prompt</button>
+      <button class="btn btn-primary" onclick="showScreen('journal')">📖 Log This Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ JOURNAL ════════ -->
+<div id="journal" class="screen">
+  <div class="journal-wrapper">
+    <div class="journal-topbar">
+      <div>
+        <div class="journal-title">My Sim Journal</div>
+        <div class="journal-sub">Your Sims' stories, logged and remembered. ✦</div>
+      </div>
+      <div class="streak-badge">
+        <div class="streak-num">🔥 3</div>
+        <div class="streak-label">Day Streak</div>
+      </div>
+    </div>
+
+    <button class="new-entry-btn" onclick="alert('In the full app, this opens a writing panel to log your session!')">
+      <div class="new-entry-icon">✏️</div>
+      <div class="new-entry-text">
+        <h4>Write Today's Entry</h4>
+        <p>What happened in your game today?</p>
+      </div>
+    </button>
+
+    <div class="journal-tabs">
+      <div class="jtab active">All Entries</div>
+      <div class="jtab">Storyteller</div>
+      <div class="jtab">Builder</div>
+      <div class="jtab">Chaos</div>
+    </div>
+
+    <div class="entry-card">
+      <div class="entry-top">
+        <div class="entry-date">March 10, 2026</div>
+        <div class="entry-sim-type">⚡ Chaos Gremlin</div>
+      </div>
+      <div class="entry-title">The day my Sim accidentally became famous</div>
+      <div class="entry-preview">Started with the prompt "your Sim becomes an overnight sensation for all the wrong reasons." Turned off needs decay and just let things spiral. By day 3 she'd been in two fights, appeared on the news and had somehow adopted a dog she definitely cannot afford…</div>
+      <div class="mood-row">
+        <span class="mood-chip chip-pink">Chaotic</span>
+        <span class="mood-chip chip-yellow">Unexpected</span>
+        <span class="mood-chip chip-teal">Would replay</span>
+      </div>
+    </div>
+
+    <div class="entry-card">
+      <div class="entry-top">
+        <div class="entry-date">March 7, 2026 · Gen 3</div>
+        <div class="entry-sim-type">🎭 Storyteller</div>
+      </div>
+      <div class="entry-title">Amara finally maxed the Painter career</div>
+      <div class="entry-preview">After two generations of bad luck with careers, Amara became a Master of the Real. The prompt that started this arc was "a Sim who is terrible at everything they try finds what they're secretly good at." Still my favourite save file ever.</div>
+      <div class="mood-row">
+        <span class="mood-chip chip-purple">Emotional</span>
+        <span class="mood-chip chip-green">Proud</span>
+        <span class="mood-chip chip-teal">Legacy run</span>
+      </div>
+    </div>
+
+    <div class="entry-card">
+      <div class="entry-top">
+        <div class="entry-date">March 2, 2026</div>
+        <div class="entry-sim-type">🧭 Explorer</div>
+      </div>
+      <div class="entry-title">The neighbours with a secret</div>
+      <div class="entry-preview">Got the "a stranger moves in next door with a secret" prompt. Made a vampire family and didn't tell my Sim. The slow creeping realisation that something was wrong was genuinely eerie to play through…</div>
+      <div class="mood-row">
+        <span class="mood-chip chip-purple">Atmospheric</span>
+        <span class="mood-chip chip-yellow">Creative</span>
+      </div>
+    </div>
+
+    <div class="journal-footer">3 entries logged · Your stories live here forever ✦</div>
+  </div>
+</div>
+
+<script>
+// ── BG PLUMBOBS ──
+const bgPbs = document.getElementById('bgPbs');
+const pbColors = ['#00b4a6','#ffe04b','#ff7eb3','#9b6dff','#45d4cc','#52d68a'];
+for (let i = 0; i < 18; i++) {
+  const pb = document.createElement('div');
+  pb.className = 'bg-pb';
+  pb.style.left = Math.random() * 100 + '%';
+  pb.style.top = (30 + Math.random() * 80) + 'vh';
+  pb.style.width = pb.style.height = (10 + Math.random() * 16) + 'px';
+  pb.style.background = pbColors[Math.floor(Math.random() * pbColors.length)];
+  pb.style.animationDuration = (14 + Math.random() * 20) + 's';
+  pb.style.animationDelay = (Math.random() * 16) + 's';
+  bgPbs.appendChild(pb);
+}
+
+// ── SCREEN ROUTING ──
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-nav'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-' + id)?.classList.add('active-nav');
+  window.scrollTo(0, 0);
+}
+
+// ── QUIZ LOGIC ──
+const scores = { storyteller:0, builder:0, chaos:0, explorer:0 };
+
+function nextQuestion(qNum, type, e) {
+  scores[type]++;
+  e.currentTarget.classList.add('selected');
+  setTimeout(() => {
+    document.getElementById('q'+qNum).classList.remove('active');
+    document.getElementById('q'+(qNum+1)).classList.add('active');
+    const pct = (qNum / 5) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = (qNum+1) + ' / 5';
+  }, 300);
+}
+
+const resultData = {
+  storyteller: {
+    emoji:'🎭', type:'The Storyteller',
+    bannerClass:'banner-teal',
+    desc:'You play The Sims like a novel you\'re writing in real time. Relationships, emotions, and backstory are your game. You don\'t just play Sims — you live alongside them.',
+    scenarios:[
+      { title:'The One Who Got Away', desc:'Your Sim\'s college sweetheart just moved back to the neighbourhood. They\'re married now. So is your Sim. Play what happens — no cheats, no easy outs.', tag:'🌹 Emotional', tagClass:'tag-pink' },
+      { title:'Letters Never Sent', desc:'Create a Sim with five deep regrets. Over five in-game weeks, give them a chance to face each one. Some won\'t go the way they hoped.', tag:'💔 Drama', tagClass:'tag-purple' },
+      { title:'The Inheritance', desc:'Your Sim inherits a house from a relative they barely knew, full of objects with stories. Discover who this person was through the space they left behind.', tag:'🏚️ Mystery', tagClass:'tag-teal' },
+    ]
+  },
+  builder: {
+    emoji:'🏠', type:'The Architect',
+    bannerClass:'banner-green',
+    desc:'The lot is your canvas and every room is a decision. You play to create spaces that feel real, lived-in, and beautiful. Sims are almost beside the point.',
+    scenarios:[
+      { title:'The Brief', desc:'A family of four, a §40,000 budget, a corner lot, one rule: every room must have natural light. Design around constraints and see what emerges.', tag:'📐 Design Challenge', tagClass:'tag-teal' },
+      { title:'The Flip', desc:'Move into the ugliest house in the neighbourhood. §25,000 to transform it completely. Then sell it. See what you made.', tag:'🔨 Renovation', tagClass:'tag-yellow' },
+      { title:'One Room at a Time', desc:'Start with a completely empty shell. Furnish only one room per Sim week. Let the house grow as the Sim\'s life does.', tag:'⏳ Slow Build', tagClass:'tag-green' },
+    ]
+  },
+  chaos: {
+    emoji:'🔥', type:'The Chaos Gremlin',
+    bannerClass:'banner-orange',
+    desc:'Rules exist to be broken, fires are kind of funny, and your best save files were complete accidents. You find joy in the unpredictable — and your Sims have the screenshots to prove it.',
+    scenarios:[
+      { title:'The Spiral', desc:'Turn off all needs management. Play for 7 Sim days without intervening once. Document what happens. Try not to feel guilty.', tag:'😅 No Control', tagClass:'tag-orange' },
+      { title:'Enemy of the State', desc:'Make every single neighbour hate your Sim before the end of the month. No violence — social sabotage only. Bonus: keep one secret ally.', tag:'😈 Social Chaos', tagClass:'tag-pink' },
+      { title:'Overnight Celebrity', desc:'Your Sim becomes famous for all the wrong reasons. One incident spirals into a public relations catastrophe. No reloading.', tag:'📰 Drama Bomb', tagClass:'tag-yellow' },
+    ]
+  },
+  explorer: {
+    emoji:'🧭', type:'The Completionist',
+    bannerClass:'banner-purple',
+    desc:'You want to see everything this game has. Aspirations, careers, skills, occult types — you\'re not done until you\'ve done it all. You need a map, not just a story.',
+    scenarios:[
+      { title:'Generational Completionist', desc:'Each generation of a legacy family maxes a different career branch. Plan it out. Execute it. Pass the torch.', tag:'🏆 Legacy Run', tagClass:'tag-teal' },
+      { title:'The Occult Collector', desc:'One household. One of every occult type. Make them all coexist. Peacefully or otherwise.', tag:'🧛 Occult', tagClass:'tag-purple' },
+      { title:'Skills Speed Run', desc:'Max 5 skills in 5 Sim weeks. No cheats. Plan your time like a project manager. Fail gracefully.', tag:'⚡ Speed Run', tagClass:'tag-yellow' },
+    ]
+  }
+};
+
+function calculateResult(finalType, e) {
+  scores[finalType]++;
+  e.currentTarget.classList.add('selected');
+  const top = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
+  const d = resultData[top];
+
+  document.getElementById('resultEmoji').textContent = d.emoji;
+  document.getElementById('resultType').textContent = d.type;
+  document.getElementById('resultDesc').textContent = d.desc;
+  document.getElementById('resultBanner').className = 'result-banner ' + d.bannerClass;
+
+  document.getElementById('scenarioCards').innerHTML = d.scenarios.map((s,i) => `
+    <div class="scenario-card">
+      <div class="sc-num">0${i+1}</div>
+      <div>
+        <div class="sc-title">${s.title}</div>
+        <div class="sc-desc">${s.desc}</div>
+        <span class="sc-tag ${s.tagClass}">${s.tag}</span>
+      </div>
+    </div>
+  `).join('');
+
+  setTimeout(() => showScreen('result'), 350);
+}
+
+function retakeQuiz() {
+  Object.keys(scores).forEach(k => scores[k] = 0);
+  document.querySelectorAll('.question-step').forEach((q,i) => {
+    q.classList.remove('active');
+    q.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    if (i===0) q.classList.add('active');
+  });
+  document.getElementById('progressFill').style.width = '20%';
+  document.getElementById('progressLabel').textContent = '1 / 5';
+  showScreen('quiz');
+}
+
+// ── RANDOM PROMPTS ──
+const prompts = [
+  { cat:'🌧️ Life Shake-Up',      text:'"Your Sim was just laid off. They have §2,000, one week, and absolutely no plan. What happens next?"', hint:'Try playing without reloading no matter what — the best stories come from the unexpected.' },
+  { cat:'👻 Mysterious Neighbour', text:'"A stranger moves in next door with a secret. Your Sim senses something is off — but can\'t prove it."', hint:'Don\'t use cheats to reveal the secret. Let your Sim figure it out naturally over time.' },
+  { cat:'💔 Old Flame',            text:'"Someone your Sim loved once just came back. They\'ve clearly changed. So has your Sim. Play what happens."', hint:'Let the relationship meter be your guide. Don\'t force a happy ending.' },
+  { cat:'🎪 Wrong Kind of Famous', text:'"Your Sim accidentally became famous for all the wrong reasons. They have to manage the fallout."', hint:'Lean into the embarrassment moodlets — they\'re telling a story.' },
+  { cat:'🐾 Unexpected Commitment', text:'"Your Sim finds a stray animal. They cannot afford it. They take it in anyway."', hint:'Don\'t adjust their budget. Make it work with exactly what they have.' },
+  { cat:'🏚️ The Inheritance',      text:'"A relative just passed and left your Sim a house in a neighbourhood they\'ve never been to."', hint:'Move them in immediately. Don\'t redecorate. Discover who lived there before.' },
+  { cat:'🌱 Starting Over',        text:'"Your Sim walks away from everything — career, home, relationships — and starts completely fresh."', hint:'Give them §1,000 and a tiny lot. They\'re a new person. Play it that way.' },
+  { cat:'🎭 Hidden Identity',      text:'"Play a Sim who is secretly nothing like the person they present to the world."', hint:'Create two trait sets — one public, one private. The gap between them is the story.' },
+  { cat:'💰 Rags to Riches',       text:'"Start with §0, no house, and one skill at level 1. The city is yours to conquer."', hint:'Classic challenge, but try picking a skill you\'ve never used before.' },
+  { cat:'🌙 Night Owl Run',        text:'"Your Sim can only be awake between 8pm and 6am. Everything they do happens at night."', hint:'Great for exploring Vampire gameplay or the bar/music career path.' },
+];
+
+let lastPromptIdx = 0;
+function randomPrompt() {
+  let idx;
+  do { idx = Math.floor(Math.random() * prompts.length); } while (idx === lastPromptIdx);
+  lastPromptIdx = idx;
+  const p = prompts[idx];
+  const card = document.getElementById('promptCard');
+  card.classList.remove('flipping');
+  void card.offsetWidth;
+  card.classList.add('flipping');
+  document.getElementById('promptCategory').textContent = p.cat;
+  document.getElementById('promptText').textContent = p.text;
+  document.getElementById('promptHint').textContent = p.hint;
+}
+
+// journal tab interaction
+document.querySelectorAll('.jtab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.jtab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ── DEEP LINK: open screen from URL param ──
+const urlParams = new URLSearchParams(window.location.search);
+const startScreen = urlParams.get('screen');
+if (startScreen && document.getElementById(startScreen)) {
+  showScreen(startScreen);
+}
+
+// ── PWA: SERVICE WORKER REGISTRATION ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(err => {
+      console.log('SW registration failed:', err);
+    });
+  });
+}
+
+// ── PWA: INSTALL BANNER ──
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const iosTip = document.getElementById('iosTip');
+
+// Detect iOS
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+const dismissed = sessionStorage.getItem('installDismissed');
+
+// Android/Chrome: capture the browser's install prompt
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!isInStandaloneMode && !dismissed) {
+    setTimeout(() => installBanner.classList.add('visible'), 3000);
+  }
+});
+
+// iOS: show manual tip instead (Safari doesn't support beforeinstallprompt)
+if (isIos && !isInStandaloneMode && !dismissed) {
+  setTimeout(() => iosTip.classList.add('visible'), 3000);
+}
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    deferredPrompt = null;
+    installBanner.classList.remove('visible');
+    if (choice.outcome === 'accepted') {
+      console.log('App installed!');
+    }
+  });
+}
+
+function dismissBanner() {
+  installBanner.classList.remove('visible');
+  iosTip.classList.remove('visible');
+  sessionStorage.setItem('installDismissed', 'true');
+}
+
+// Hide banner once app is installed
+window.addEventListener('appinstalled', () => {
+  installBanner.classList.remove('visible');
+  deferredPrompt = null;
+});
+</script>
+
+<!-- PWA Install Banner (Android/Chrome) -->
+<div id="installBanner">
+  <div class="install-icon">🎮</div>
+  <div class="install-text">
+    <h4>Add to Home Screen</h4>
+    <p>Install the app for quick access anytime</p>
+  </div>
+  <div class="install-actions">
+    <button class="btn-install" onclick="installApp()">Install</button>
+    <button class="btn-dismiss" onclick="dismissBanner()">✕</button>
+  </div>
+</div>
+
+<!-- iOS Install Tip (Safari on iPhone/iPad) -->
+<div id="iosTip">
+  <p>To install this app on your iPhone, tap <strong>Share ⬆</strong> then <strong>"Add to Home Screen"</strong> — it'll work just like an app!</p>
+  <button class="ios-close" onclick="dismissBanner()">Got it</button>
+</div>
+
+</body>
+</html>
