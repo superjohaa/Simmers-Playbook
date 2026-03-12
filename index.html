@@ -7,7 +7,7 @@
 
 <!-- PWA essentials -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#008a7e">
+<meta name="theme-color" content="#0098EE">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Simmer's Playbook">
@@ -23,37 +23,51 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --teal:       #39D7FD;
-    --teal-dark:  #0098EE;
-    --teal-light: #9EEDFF;
-    --teal-pale:  #C8FDBE;
-    --aqua:       #29B522;
-    --sky:        #74d7f7;
-    --green:     #1B7C05;
-    --green-dk:  #176A06;
-    --pink:       #ff7eb3;
-    --pink-pale:  #ffe8f3;
-    --purple:     #9b6dff;
-    --purple-pale:#ede5ff;
-    --orange:     #ff8c42;
-    --green:      #52d68a;
-    --white:      #ffffff;
-    --off-white:  #f4fffe;
-    --panel:      #eaf9f8;
-    --ink:        #1a2e2c;
-    --mid:        #4a7570;
-    --soft:       #8fb8b4;
+    /* ── Blues → backgrounds, surfaces, accents ── */
+    --bg-darkest:  #0098EE;   /* Darkest Bleu → deep bg panels */
+    --bg-dark:     #39D7FD;   /* Dark Bleu → surface accents */
+    --bg-mid:      #9EEDFF;   /* Bleu → light accent, highlights */
+    --bg-pale:     #daf5ff;   /* Bleu tint → pale backgrounds */
+    --bg-softest:  #eef9ff;   /* Near-white blue tint */
+
+    /* ── Greens → nav, buttons, actions ── */
+    --action:        #29B522;   /* Green → primary buttons */
+    --action-dark:   #1B7C05;   /* Dark Green → button shadows, hover */
+    --action-darkest:#176A06;   /* Darkest Green → nav bar */
+    --action-light:  #C8FDBE;   /* Light Green → button pale states */
+
+    /* ── Accent (light blue replaces yellow) ── */
+    --accent:      #9EEDFF;   /* Light Bleu → highlights, active nav, plumbob */
+    --accent-dark: #39D7FD;   /* Dark Bleu → accent shadows */
+
+    /* ── Off-white (replaces yellow surfaces) ── */
+    --offwhite:    #f8fbff;   /* cool off-white */
+    --offwhite-dk: #dde8f0;   /* slightly deeper for borders */
+
+    /* ── Supporting (kept but de-emphasised) ── */
+    --pink:        #ff7eb3;
+    --pink-pale:   #ffe8f3;
+    --purple:      #9b6dff;
+    --purple-pale: #ede5ff;
+    --orange:      #ff8c42;
+
+    /* ── Neutrals ── */
+    --white:       #ffffff;
+    --off-white:   #f8fbff;
+    --ink:         #062312;   /* deep green-black ink */
+    --mid:         #2a5e1a;   /* mid green text */
+    --soft:        #6abf5e;   /* soft green for subtle text */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Nunito', sans-serif;
-    background: var(--off-white);
+    background: var(--bg-softest);
     color: var(--ink);
     min-height: 100vh;
     overflow-x: hidden;
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpolygon points='0,0 0,20 5,15 8,24 11,23 8,14 14,14' fill='%2300b4a6' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E"), auto;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28'%3E%3Cpolygon points='0,0 0,20 5,15 8,24 11,23 8,14 14,14' fill='%2329B522' stroke='white' stroke-width='1.5'/%3E%3C/svg%3E"), auto;
   }
 
   /* ── ANIMATED BACKGROUND ── */
@@ -61,9 +75,9 @@
     content: '';
     position: fixed; inset: 0;
     background:
-      radial-gradient(ellipse 60% 50% at 10% 10%, rgba(0,180,166,0.13) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 90% 90%, rgba(116,215,247,0.12) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,224,75,0.05) 0%, transparent 70%);
+      radial-gradient(ellipse 60% 50% at 10% 10%, rgba(57,215,253,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 90% 90%, rgba(41,181,34,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(41,181,34,0.05) 0%, transparent 70%);
     pointer-events: none; z-index: 0;
   }
 
@@ -90,9 +104,9 @@
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 40px;
     height: 68px;
-    background: var(--teal-dark);
+    background: var(--action-darkest);
     position: sticky; top: 0; z-index: 200;
-    box-shadow: 0 4px 24px rgba(0,138,126,0.35);
+    box-shadow: 0 4px 24px rgba(23,106,6,0.4);
   }
 
   .logo {
@@ -106,16 +120,16 @@
   .logo-pb-wrap { position: relative; width: 28px; height: 28px; }
   .logo-pb {
     width: 18px; height: 18px;
-    background: var(--yellow);
+    background: var(--accent);
     transform: rotate(45deg);
     border-radius: 3px;
     position: absolute; top: 5px; left: 5px;
-    box-shadow: 0 0 12px rgba(255,224,75,0.6);
+    box-shadow: 0 0 12px rgba(158,237,255,0.8);
     animation: pbglow 2s ease-in-out infinite;
   }
   @keyframes pbglow {
-    0%,100% { box-shadow: 0 0 10px rgba(255,224,75,0.5); }
-    50%      { box-shadow: 0 0 22px rgba(255,224,75,0.9); }
+    0%,100% { box-shadow: 0 0 10px rgba(158,237,255,0.6); }
+    50%      { box-shadow: 0 0 22px rgba(158,237,255,1.0); }
   }
 
   .nav-links { display: flex; gap: 4px; }
@@ -128,7 +142,7 @@
     text-transform: uppercase;
   }
   .nav-links a:hover { background: rgba(255,255,255,0.15); color: var(--white); }
-  .nav-links a.active-nav { background: rgba(255,255,255,0.2); color: var(--yellow); }
+  .nav-links a.active-nav { background: rgba(255,255,255,0.2); color: var(--accent); }
 
   /* ── SCREENS ── */
   .screen { display: none; min-height: calc(100vh - 68px); position: relative; z-index: 1; }
@@ -147,25 +161,25 @@
     text-decoration: none; letter-spacing: 0.01em;
   }
   .btn-primary {
-    background: var(--teal); color: var(--white);
-    box-shadow: 0 4px 0 var(--teal-dark), 0 6px 20px rgba(0,180,166,0.3);
+    background: var(--action); color: var(--white);
+    box-shadow: 0 4px 0 var(--action-dark), 0 6px 20px rgba(41,181,34,0.3);
   }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-dark), 0 10px 28px rgba(0,180,166,0.35); }
-  .btn-primary:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--teal-dark); }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--action-dark), 0 10px 28px rgba(41,181,34,0.35); }
+  .btn-primary:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--action-dark); }
 
-  .btn-yellow {
-    background: var(--yellow); color: var(--ink);
-    box-shadow: 0 4px 0 var(--yellow-dk), 0 6px 20px rgba(255,224,75,0.3);
+  .btn-action {
+    background: var(--action); color: var(--white);
+    box-shadow: 0 4px 0 var(--action-dark), 0 6px 20px rgba(41,181,34,0.25);
   }
-  .btn-yellow:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--yellow-dk), 0 10px 28px rgba(255,224,75,0.4); }
-  .btn-yellow:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--yellow-dk); }
+  .btn-action:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--action-dark), 0 10px 28px rgba(41,181,34,0.35); }
+  .btn-action:active { transform: translateY(1px); box-shadow: 0 2px 0 var(--action-dark); }
 
   .btn-outline {
-    background: var(--white); color: var(--teal-dark);
-    border: 2.5px solid var(--teal);
-    box-shadow: 0 4px 0 var(--teal-light);
+    background: var(--white); color: var(--action-dark);
+    border: 2.5px solid var(--action);
+    box-shadow: 0 4px 0 var(--action-light);
   }
-  .btn-outline:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-light); }
+  .btn-outline:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--action-light); }
 
   /* ══════════════════════════════════
      HOME SCREEN
@@ -176,7 +190,7 @@
   }
 
   .hero-left {
-    background: linear-gradient(160deg, var(--teal-dark) 0%, #005f58 100%);
+    background: linear-gradient(160deg, var(--action-darkest) 0%, var(--action-dark) 100%);
     padding: 70px 60px;
     display: flex; flex-direction: column; justify-content: center;
     position: relative; overflow: hidden;
@@ -198,8 +212,8 @@
 
   .hero-tag {
     display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(255,224,75,0.18); border: 1px solid rgba(255,224,75,0.35);
-    color: var(--yellow); font-size: 0.75rem; font-weight: 800;
+    background: rgba(158,237,255,0.18); border: 1px solid rgba(158,237,255,0.35);
+    color: var(--accent); font-size: 0.75rem; font-weight: 800;
     letter-spacing: 0.1em; text-transform: uppercase;
     padding: 6px 14px; border-radius: 100px; margin-bottom: 28px;
     width: fit-content;
@@ -211,7 +225,7 @@
     font-weight: 600; line-height: 1.15;
     color: var(--white); margin-bottom: 20px;
   }
-  .hero-h1 em { font-style: italic; color: var(--yellow); }
+  .hero-h1 em { font-style: italic; color: var(--accent); }
 
   .hero-sub {
     font-size: 1rem; color: rgba(255,255,255,0.72);
@@ -223,7 +237,7 @@
 
   /* big plumbob illustration */
   .hero-right {
-    background: var(--teal-pale);
+    background: var(--bg-pale);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
     padding: 60px 40px; gap: 24px;
@@ -235,13 +249,13 @@
     background: repeating-linear-gradient(
       45deg,
       transparent, transparent 30px,
-      rgba(0,180,166,0.04) 30px, rgba(0,180,166,0.04) 60px
+      rgba(57,215,253,0.05) 30px, rgba(57,215,253,0.05) 60px
     );
   }
 
   .big-plumbob {
     width: 120px; height: 120px;
-    background: linear-gradient(135deg, var(--aqua) 0%, var(--teal-dark) 100%);
+    background: linear-gradient(135deg, var(--action) 0%, var(--action-dark) 100%);
     transform: rotate(45deg); border-radius: 12px;
     box-shadow: 0 0 0 16px rgba(0,180,166,0.12), 0 20px 60px rgba(0,138,126,0.4);
     animation: bobfloat 3s ease-in-out infinite;
@@ -262,14 +276,14 @@
     cursor: pointer; transition: all 0.2s ease;
     border: 2px solid transparent;
   }
-  .feat-pill:hover { border-color: var(--teal); transform: translateX(6px); box-shadow: 0 4px 20px rgba(0,138,126,0.18); }
+  .feat-pill:hover { border-color: var(--action); transform: translateX(6px); box-shadow: 0 4px 20px rgba(0,138,126,0.18); }
   .pill-icon {
     width: 42px; height: 42px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.3rem; flex-shrink: 0;
   }
-  .pill-icon.teal  { background: var(--teal-pale); }
-  .pill-icon.yell  { background: #fff8d6; }
+  .pill-icon.teal  { background: var(--bg-pale); }
+  .pill-icon.yell  { background: var(--offwhite); }
   .pill-icon.pink  { background: var(--pink-pale); }
   .pill-icon.purp  { background: var(--purple-pale); }
   .pill-text h4 { font-size: 0.92rem; font-weight: 800; color: var(--ink); }
@@ -286,16 +300,16 @@
     display: flex; align-items: center; gap: 14px; margin-bottom: 44px;
   }
   .progress-bar {
-    flex: 1; height: 10px; background: var(--teal-light);
+    flex: 1; height: 10px; background: var(--bg-pale);
     border-radius: 100px; overflow: hidden;
   }
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--teal), var(--yellow));
+    background: linear-gradient(90deg, var(--action), var(--accent));
     border-radius: 100px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
   }
   .progress-label {
-    font-size: 0.8rem; font-weight: 800; color: var(--teal-dark);
+    font-size: 0.8rem; font-weight: 800; color: var(--action-dark);
     white-space: nowrap;
   }
 
@@ -304,7 +318,7 @@
 
   .q-chip {
     display: inline-block;
-    background: var(--teal); color: var(--white);
+    background: var(--action); color: var(--white);
     font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em;
     text-transform: uppercase; padding: 4px 12px; border-radius: 100px;
     margin-bottom: 16px;
@@ -319,18 +333,18 @@
   .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 32px; }
 
   .option-card {
-    background: var(--white); border: 2.5px solid var(--teal-light);
+    background: var(--white); border: 2.5px solid var(--bg-mid);
     border-radius: 16px; padding: 20px 18px;
     cursor: pointer; transition: all 0.2s ease; text-align: left;
-    box-shadow: 0 2px 0 var(--teal-light);
+    box-shadow: 0 2px 0 var(--bg-mid);
   }
   .option-card:hover {
-    border-color: var(--teal); background: var(--teal-pale);
-    transform: translateY(-4px); box-shadow: 0 6px 0 var(--teal-light);
+    border-color: var(--action); background: var(--bg-pale);
+    transform: translateY(-4px); box-shadow: 0 6px 0 var(--bg-mid);
   }
   .option-card.selected {
-    border-color: var(--teal); background: var(--teal-pale);
-    box-shadow: 0 0 0 4px rgba(0,180,166,0.15), 0 4px 0 var(--teal);
+    border-color: var(--action); background: var(--bg-pale);
+    box-shadow: 0 0 0 4px rgba(41,181,34,0.15), 0 4px 0 var(--action);
   }
   .opt-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
   .opt-label { font-weight: 800; font-size: 0.95rem; color: var(--ink); margin-bottom: 4px; }
@@ -359,10 +373,10 @@
     border-radius: 50%;
     background: rgba(255,255,255,0.07);
   }
-  .banner-teal   { background: linear-gradient(135deg, var(--teal-dark), var(--aqua)); }
+  .banner-teal   { background: linear-gradient(135deg, var(--bg-darkest), var(--bg-dark)); }
   .banner-purple { background: linear-gradient(135deg, #7c52cc, var(--purple)); }
   .banner-orange { background: linear-gradient(135deg, #d4520a, var(--orange)); }
-  .banner-green  { background: linear-gradient(135deg, #1a8a4c, var(--green)); }
+  .banner-green  { background: linear-gradient(135deg, var(--action-darkest), var(--action)); }
 
   .result-eyebrow {
     font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em;
@@ -395,16 +409,16 @@
   .scenario-cards { display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
 
   .scenario-card {
-    background: var(--white); border: 2px solid var(--teal-light);
+    background: var(--white); border: 2px solid var(--bg-mid);
     border-radius: 16px; padding: 22px 24px;
     display: flex; align-items: flex-start; gap: 16px;
     cursor: pointer; transition: all 0.22s ease;
-    box-shadow: 0 2px 0 var(--teal-light);
+    box-shadow: 0 2px 0 var(--bg-mid);
   }
   .scenario-card:hover {
-    border-color: var(--teal);
+    border-color: var(--action);
     transform: translateX(6px);
-    box-shadow: -6px 4px 0 var(--teal-light);
+    box-shadow: -6px 4px 0 var(--bg-mid);
   }
   .sc-num {
     font-family: 'Lora', serif; font-size: 1.6rem; font-weight: 600;
@@ -417,10 +431,10 @@
     font-size: 0.72rem; font-weight: 800; letter-spacing: 0.07em;
     text-transform: uppercase; padding: 3px 10px; border-radius: 100px;
   }
-  .tag-teal   { background: var(--teal-pale);   color: var(--teal-dark); }
+  .tag-teal   { background: var(--bg-pale);   color: var(--action-dark); }
   .tag-pink   { background: var(--pink-pale);    color: #b0005a; }
   .tag-purple { background: var(--purple-pale);  color: #5a00cc; }
-  .tag-yellow { background: #fff8d6;             color: var(--yellow-dk); }
+  .tag-yellow { background: var(--offwhite);       color: var(--mid); }
   .tag-green  { background: #d4f5e3;             color: #1a6638; }
   .tag-orange { background: #ffe5d0;             color: #a03800; }
 
@@ -442,15 +456,15 @@
   }
   .prompt-eyebrow::before, .prompt-eyebrow::after {
     content: ''; width: 40px; height: 2px;
-    background: var(--teal-light); border-radius: 2px;
+    background: var(--bg-pale); border-radius: 2px;
   }
 
   .prompt-card {
     background: var(--white);
-    border: 3px solid var(--teal-light);
+    border: 3px solid var(--bg-mid);
     border-radius: 28px; padding: 44px 48px;
     max-width: 600px; width: 100%;
-    box-shadow: 0 6px 0 var(--teal-light), 0 16px 50px rgba(0,138,126,0.1);
+    box-shadow: 0 6px 0 var(--bg-mid), 0 16px 50px rgba(0,138,126,0.1);
     margin-bottom: 32px; text-align: center;
     position: relative; overflow: hidden;
     transition: all 0.3s ease;
@@ -466,7 +480,7 @@
     display: inline-block;
     font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em;
     text-transform: uppercase; color: var(--white);
-    background: var(--teal); padding: 5px 14px;
+    background: var(--action-darkest); padding: 5px 14px;
     border-radius: 100px; margin-bottom: 20px;
   }
   .prompt-text {
@@ -476,7 +490,7 @@
   }
   .prompt-hint {
     font-size: 0.84rem; color: var(--mid); line-height: 1.65;
-    background: var(--teal-pale); border-radius: 12px; padding: 14px 18px;
+    background: var(--bg-pale); border-radius: 12px; padding: 14px 18px;
   }
 
   .prompt-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -501,22 +515,22 @@
   .journal-sub { font-size: 0.88rem; color: var(--mid); margin-top: 4px; }
 
   .streak-badge {
-    background: linear-gradient(135deg, var(--yellow), #ffbe00);
+    background: linear-gradient(135deg, var(--action), var(--action-light));
     border-radius: 14px; padding: 12px 18px; text-align: center;
-    box-shadow: 0 4px 0 var(--yellow-dk);
+    box-shadow: 0 4px 0 var(--action-dark);
   }
   .streak-num { font-size: 1.6rem; font-weight: 900; color: var(--ink); line-height: 1; }
   .streak-label { font-size: 0.7rem; font-weight: 800; color: var(--ink); opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
 
   .new-entry-btn {
     display: flex; align-items: center; gap: 14px;
-    background: linear-gradient(135deg, var(--teal), var(--aqua));
+    background: linear-gradient(135deg, var(--action-darkest), var(--action));
     border-radius: 18px; padding: 22px 24px; margin-bottom: 20px;
     cursor: pointer; border: none; width: 100%;
-    transition: all 0.2s; box-shadow: 0 4px 0 var(--teal-dark);
+    transition: all 0.2s; box-shadow: 0 4px 0 var(--action-darkest);
     text-align: left;
   }
-  .new-entry-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--teal-dark); }
+  .new-entry-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 var(--action-darkest); }
   .new-entry-icon {
     width: 48px; height: 48px; background: rgba(255,255,255,0.25);
     border-radius: 12px; display: flex; align-items: center; justify-content: center;
@@ -527,28 +541,28 @@
 
   .journal-tabs {
     display: flex; gap: 4px; margin-bottom: 20px;
-    background: var(--teal-pale); border-radius: 12px; padding: 4px;
+    background: var(--bg-pale); border-radius: 12px; padding: 4px;
   }
   .jtab {
     flex: 1; text-align: center; font-size: 0.8rem; font-weight: 800;
     padding: 8px; border-radius: 9px; cursor: pointer;
     color: var(--mid); transition: all 0.2s;
   }
-  .jtab.active { background: var(--white); color: var(--teal-dark); box-shadow: 0 2px 8px rgba(0,138,126,0.12); }
+  .jtab.active { background: var(--white); color: var(--action-dark); box-shadow: 0 2px 8px rgba(0,138,126,0.12); }
 
   .entry-card {
-    background: var(--white); border: 2px solid var(--teal-light);
+    background: var(--white); border: 2px solid var(--bg-mid);
     border-radius: 18px; padding: 24px 26px; margin-bottom: 14px;
     cursor: pointer; transition: all 0.2s;
-    box-shadow: 0 2px 0 var(--teal-light);
+    box-shadow: 0 2px 0 var(--bg-mid);
   }
-  .entry-card:hover { border-color: var(--teal); transform: translateY(-2px); box-shadow: 0 5px 0 var(--teal-light); }
+  .entry-card:hover { border-color: var(--action); transform: translateY(-2px); box-shadow: 0 5px 0 var(--bg-mid); }
 
   .entry-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .entry-date { font-size: 0.75rem; font-weight: 700; color: var(--soft); letter-spacing: 0.06em; text-transform: uppercase; }
   .entry-sim-type {
     font-size: 0.72rem; font-weight: 800; padding: 3px 10px;
-    border-radius: 100px; background: var(--teal-pale); color: var(--teal-dark);
+    border-radius: 100px; background: var(--bg-pale); color: var(--action-dark);
     letter-spacing: 0.05em; text-transform: uppercase;
   }
   .entry-title { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
@@ -559,8 +573,8 @@
     font-size: 0.72rem; font-weight: 800; padding: 4px 10px;
     border-radius: 100px; letter-spacing: 0.04em;
   }
-  .chip-teal   { background: var(--teal-pale);   color: var(--teal-dark); }
-  .chip-yellow { background: #fff8d6;             color: var(--yellow-dk); }
+  .chip-teal   { background: var(--bg-pale);   color: var(--action-dark); }
+  .chip-yellow { background: var(--offwhite);       color: var(--mid); }
   .chip-pink   { background: var(--pink-pale);    color: #b0005a; }
   .chip-green  { background: #d4f5e3;             color: #1a6638; }
   .chip-purple { background: var(--purple-pale);  color: #5a00cc; }
@@ -569,6 +583,91 @@
     text-align: center; font-size: 0.82rem; color: var(--soft);
     margin-top: 12px; font-weight: 600;
   }
+
+  /* ══════════════════════════════════
+     JOURNAL WRITE MODAL
+  ══════════════════════════════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,46,44,0.6); backdrop-filter: blur(6px);
+    z-index: 500; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal {
+    background: var(--white); border-radius: 24px;
+    padding: 36px; width: 100%; max-width: 580px;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    animation: modalUp 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes modalUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .modal-title { font-family: 'Lora', serif; font-size: 1.4rem; font-weight: 600; color: var(--ink); }
+  .modal-close {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--bg-pale); border: none; cursor: pointer;
+    font-size: 1rem; color: var(--mid); transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--bg-pale); color: var(--ink); }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block; font-size: 0.78rem; font-weight: 800;
+    color: var(--mid); text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 7px;
+  }
+  .form-input, .form-textarea, .form-select {
+    width: 100%; padding: 12px 16px;
+    border: 2px solid var(--bg-mid); border-radius: 12px;
+    font-family: 'Nunito', sans-serif; font-size: 0.95rem;
+    color: var(--ink); background: var(--bg-softest);
+    transition: border-color 0.2s; outline: none;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--action); background: var(--white);
+  }
+  .form-textarea { min-height: 140px; resize: vertical; line-height: 1.6; }
+  .form-select { cursor: pointer; }
+
+  .mood-picker { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mood-toggle {
+    padding: 6px 14px; border-radius: 100px;
+    border: 2px solid var(--bg-mid); background: var(--white);
+    font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800;
+    cursor: pointer; transition: all 0.15s; color: var(--mid);
+  }
+  .mood-toggle.selected {
+    border-color: var(--action); background: var(--bg-pale); color: var(--action-dark);
+  }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+
+  /* entry delete button */
+  .entry-delete {
+    background: none; border: none; cursor: pointer;
+    color: var(--soft); font-size: 1rem; padding: 4px;
+    border-radius: 6px; transition: all 0.2s; line-height: 1;
+  }
+  .entry-delete:hover { color: #e05a5a; background: #ffeaea; }
+
+  .empty-journal {
+    text-align: center; padding: 60px 20px;
+    color: var(--mid);
+  }
+  .empty-journal .empty-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+  .empty-journal h3 { font-family: 'Lora', serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--ink); }
+  .empty-journal p { font-size: 0.88rem; line-height: 1.6; }
 
   /* ══════════════════════════════════
      PWA INSTALL BANNER
@@ -594,7 +693,7 @@
   }
   .install-icon {
     width: 48px; height: 48px; border-radius: 12px;
-    background: linear-gradient(135deg, var(--teal), var(--aqua));
+    background: linear-gradient(135deg, var(--action), var(--action-light));
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; font-size: 1.4rem;
   }
@@ -603,13 +702,13 @@
   .install-text p  { font-size: 0.75rem; color: rgba(255,255,255,0.55); line-height: 1.4; }
   .install-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn-install {
-    background: var(--teal); color: var(--white);
+    background: var(--action); color: var(--white);
     border: none; border-radius: 100px;
     padding: 8px 16px; font-family: 'Nunito', sans-serif;
     font-size: 0.82rem; font-weight: 800; cursor: pointer;
     transition: all 0.2s; white-space: nowrap;
   }
-  .btn-install:hover { background: var(--aqua); transform: translateY(-1px); }
+  .btn-install:hover { background: var(--action-light); transform: translateY(-1px); }
   .btn-dismiss {
     background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6);
     border: none; border-radius: 100px;
@@ -633,7 +732,7 @@
   }
   #iosTip.visible { display: block; }
   #iosTip p { font-size: 0.84rem; color: rgba(255,255,255,0.8); line-height: 1.6; }
-  #iosTip strong { color: var(--yellow); }
+  #iosTip strong { color: var(--accent); }
   #iosTip .ios-close {
     margin-top: 12px; background: rgba(255,255,255,0.1);
     border: none; border-radius: 100px; padding: 7px 18px;
@@ -685,7 +784,7 @@
       <h1 class="hero-h1">Find your <em>next great</em> Sims story.</h1>
       <p class="hero-sub">Discover your Simmer personality, unlock tailored scenarios, roll random prompts when you're stuck, and keep a journal of the moments that made your playthroughs unforgettable.</p>
       <div class="hero-btns">
-        <button class="btn btn-yellow" onclick="showScreen('quiz')">✦ Find My Playstyle</button>
+        <button class="btn btn-action" onclick="showScreen('quiz')">✦ Find My Playstyle</button>
         <button class="btn btn-outline" onclick="showScreen('prompt')">🎲 Random Prompt</button>
       </div>
     </div>
@@ -907,7 +1006,7 @@
       <div class="prompt-hint" id="promptHint">Try playing this without reloading no matter what happens — the best Sims stories come from the unexpected.</div>
     </div>
     <div class="prompt-actions">
-      <button class="btn btn-yellow" onclick="randomPrompt()">🎲 New Prompt</button>
+      <button class="btn btn-action" onclick="randomPrompt()">🎲 New Prompt</button>
       <button class="btn btn-primary" onclick="showScreen('journal')">📖 Log This Session</button>
     </div>
   </div>
@@ -922,12 +1021,12 @@
         <div class="journal-sub">Your Sims' stories, logged and remembered. ✦</div>
       </div>
       <div class="streak-badge">
-        <div class="streak-num">🔥 3</div>
+        <div class="streak-num" id="streakNum">🔥 0</div>
         <div class="streak-label">Day Streak</div>
       </div>
     </div>
 
-    <button class="new-entry-btn" onclick="alert('In the full app, this opens a writing panel to log your session!')">
+    <button class="new-entry-btn" onclick="openModal()">
       <div class="new-entry-icon">✏️</div>
       <div class="new-entry-text">
         <h4>Write Today's Entry</h4>
@@ -936,61 +1035,74 @@
     </button>
 
     <div class="journal-tabs">
-      <div class="jtab active">All Entries</div>
-      <div class="jtab">Storyteller</div>
-      <div class="jtab">Builder</div>
-      <div class="jtab">Chaos</div>
+      <div class="jtab active" onclick="filterEntries('all', this)">All Entries</div>
+      <div class="jtab" onclick="filterEntries('🎭 Storyteller', this)">Storyteller</div>
+      <div class="jtab" onclick="filterEntries('🏠 Architect', this)">Builder</div>
+      <div class="jtab" onclick="filterEntries('🔥 Chaos Gremlin', this)">Chaos</div>
+      <div class="jtab" onclick="filterEntries('🧭 Completionist', this)">Explorer</div>
     </div>
 
-    <div class="entry-card">
-      <div class="entry-top">
-        <div class="entry-date">March 10, 2026</div>
-        <div class="entry-sim-type">⚡ Chaos Gremlin</div>
-      </div>
-      <div class="entry-title">The day my Sim accidentally became famous</div>
-      <div class="entry-preview">Started with the prompt "your Sim becomes an overnight sensation for all the wrong reasons." Turned off needs decay and just let things spiral. By day 3 she'd been in two fights, appeared on the news and had somehow adopted a dog she definitely cannot afford…</div>
-      <div class="mood-row">
-        <span class="mood-chip chip-pink">Chaotic</span>
-        <span class="mood-chip chip-yellow">Unexpected</span>
-        <span class="mood-chip chip-teal">Would replay</span>
+    <div id="entriesList"></div>
+    <div class="journal-footer" id="journalFooter"></div>
+  </div>
+</div>
+
+<!-- ════════ WRITE ENTRY MODAL ════════ -->
+<div class="modal-overlay" id="writeModal" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ New Journal Entry</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Entry Title</label>
+      <input class="form-input" id="entryTitle" type="text" placeholder="e.g. The day everything went wrong…" maxlength="80">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">What happened?</label>
+      <textarea class="form-textarea" id="entryBody" placeholder="Tell the story of your session — what prompt did you use, what surprised you, what made it memorable…"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Simmer Type</label>
+      <select class="form-select" id="entryType">
+        <option value="">— Choose your style —</option>
+        <option value="🎭 Storyteller">🎭 Storyteller</option>
+        <option value="🏠 Architect">🏠 Architect</option>
+        <option value="🔥 Chaos Gremlin">🔥 Chaos Gremlin</option>
+        <option value="🧭 Completionist">🧭 Completionist</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mood Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(pick any that fit)</span></label>
+      <div class="mood-picker" id="moodPicker">
+        <button class="mood-toggle" onclick="toggleMood(this)">Chaotic</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Emotional</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Proud</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Funny</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Unexpected</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Atmospheric</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Creative</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Dramatic</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Would replay</button>
+        <button class="mood-toggle" onclick="toggleMood(this)">Never again 😂</button>
       </div>
     </div>
 
-    <div class="entry-card">
-      <div class="entry-top">
-        <div class="entry-date">March 7, 2026 · Gen 3</div>
-        <div class="entry-sim-type">🎭 Storyteller</div>
-      </div>
-      <div class="entry-title">Amara finally maxed the Painter career</div>
-      <div class="entry-preview">After two generations of bad luck with careers, Amara became a Master of the Real. The prompt that started this arc was "a Sim who is terrible at everything they try finds what they're secretly good at." Still my favourite save file ever.</div>
-      <div class="mood-row">
-        <span class="mood-chip chip-purple">Emotional</span>
-        <span class="mood-chip chip-green">Proud</span>
-        <span class="mood-chip chip-teal">Legacy run</span>
-      </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="saveEntry()" style="flex:1">💾 Save Entry</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
     </div>
-
-    <div class="entry-card">
-      <div class="entry-top">
-        <div class="entry-date">March 2, 2026</div>
-        <div class="entry-sim-type">🧭 Explorer</div>
-      </div>
-      <div class="entry-title">The neighbours with a secret</div>
-      <div class="entry-preview">Got the "a stranger moves in next door with a secret" prompt. Made a vampire family and didn't tell my Sim. The slow creeping realisation that something was wrong was genuinely eerie to play through…</div>
-      <div class="mood-row">
-        <span class="mood-chip chip-purple">Atmospheric</span>
-        <span class="mood-chip chip-yellow">Creative</span>
-      </div>
-    </div>
-
-    <div class="journal-footer">3 entries logged · Your stories live here forever ✦</div>
   </div>
 </div>
 
 <script>
 // ── BG PLUMBOBS ──
 const bgPbs = document.getElementById('bgPbs');
-const pbColors = ['#00b4a6','#ffe04b','#ff7eb3','#9b6dff','#45d4cc','#52d68a'];
+const pbColors = ['#29B522','#C8FDBE','#9EEDFF','#39D7FD','#1B7C05','#0098EE'];
 for (let i = 0; i < 18; i++) {
   const pb = document.createElement('div');
   pb.className = 'bg-pb';
@@ -1143,6 +1255,164 @@ document.querySelectorAll('.jtab').forEach(tab => {
     tab.classList.add('active');
   });
 });
+
+// ── JOURNAL: localStorage engine ──
+const STORAGE_KEY = 'simmers_journal_entries';
+let activeFilter = 'all';
+
+function loadEntries() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+}
+
+const moodChipClass = {
+  'Chaotic':'chip-pink', 'Emotional':'chip-purple', 'Proud':'chip-green',
+  'Funny':'chip-yellow', 'Unexpected':'chip-yellow', 'Atmospheric':'chip-purple',
+  'Creative':'chip-teal', 'Dramatic':'chip-pink', 'Would replay':'chip-teal',
+  'Never again 😂':'chip-yellow'
+};
+
+function renderEntries(filter) {
+  const entries = loadEntries();
+  const list = document.getElementById('entriesList');
+  const footer = document.getElementById('journalFooter');
+  const filtered = filter === 'all' ? entries : entries.filter(e => e.type === filter);
+
+  // update streak
+  updateStreak(entries);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `
+      <div class="empty-journal">
+        <span class="empty-icon">📖</span>
+        <h3>${filter === 'all' ? 'No entries yet' : 'No ' + filter + ' entries yet'}</h3>
+        <p>${filter === 'all'
+          ? 'Write your first entry after your next session — even one line is enough to start.'
+          : 'Try the quiz to discover if this is your style, then come back and log a session!'
+        }</p>
+      </div>`;
+    footer.textContent = '';
+    return;
+  }
+
+  list.innerHTML = filtered.map(entry => `
+    <div class="entry-card">
+      <div class="entry-top">
+        <div class="entry-date">${formatDate(entry.date)}</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${entry.type ? `<div class="entry-sim-type">${entry.type}</div>` : ''}
+          <button class="entry-delete" onclick="deleteEntry('${entry.id}')" title="Delete entry">🗑️</button>
+        </div>
+      </div>
+      <div class="entry-title">${escHtml(entry.title)}</div>
+      <div class="entry-preview">${escHtml(entry.body)}</div>
+      ${entry.moods && entry.moods.length ? `
+        <div class="mood-row">
+          ${entry.moods.map(m => `<span class="mood-chip ${moodChipClass[m] || 'chip-teal'}">${m}</span>`).join('')}
+        </div>` : ''}
+    </div>
+  `).join('');
+
+  const total = entries.length;
+  footer.textContent = `${total} ${total === 1 ? 'entry' : 'entries'} logged · Your stories live here forever ✦`;
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function deleteEntry(id) {
+  if (!confirm('Delete this entry? This cannot be undone.')) return;
+  const entries = loadEntries().filter(e => e.id !== id);
+  saveEntries(entries);
+  renderEntries(activeFilter);
+}
+
+function filterEntries(filter, tabEl) {
+  activeFilter = filter;
+  document.querySelectorAll('.jtab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  renderEntries(filter);
+}
+
+function updateStreak(entries) {
+  if (!entries.length) { document.getElementById('streakNum').textContent = '🔥 0'; return; }
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dates = [...new Set(entries.map(e => {
+    const d = new Date(e.date); d.setHours(0,0,0,0); return d.getTime();
+  }))].sort((a,b) => b-a);
+  let streak = 0, check = today.getTime();
+  for (const d of dates) {
+    if (d === check) { streak++; check -= 86400000; }
+    else if (d === check + 86400000) { streak++; check = d - 86400000; }
+    else break;
+  }
+  document.getElementById('streakNum').textContent = `🔥 ${streak}`;
+}
+
+// ── MODAL ──
+function openModal() {
+  document.getElementById('entryTitle').value = '';
+  document.getElementById('entryBody').value = '';
+  document.getElementById('entryType').value = '';
+  document.querySelectorAll('.mood-toggle').forEach(b => b.classList.remove('selected'));
+  document.getElementById('writeModal').classList.add('open');
+  setTimeout(() => document.getElementById('entryTitle').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('writeModal').classList.remove('open');
+}
+
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('writeModal')) closeModal();
+}
+
+function toggleMood(btn) {
+  btn.classList.toggle('selected');
+}
+
+function saveEntry() {
+  const title = document.getElementById('entryTitle').value.trim();
+  const body  = document.getElementById('entryBody').value.trim();
+  if (!title) { document.getElementById('entryTitle').focus(); document.getElementById('entryTitle').style.borderColor='#e05a5a'; return; }
+  if (!body)  { document.getElementById('entryBody').focus();  document.getElementById('entryBody').style.borderColor='#e05a5a'; return; }
+
+  const moods = [...document.querySelectorAll('.mood-toggle.selected')].map(b => b.textContent);
+  const entry = {
+    id:    Date.now().toString(),
+    date:  new Date().toISOString(),
+    title, body,
+    type:  document.getElementById('entryType').value,
+    moods
+  };
+
+  const entries = loadEntries();
+  entries.unshift(entry); // newest first
+  saveEntries(entries);
+  closeModal();
+  renderEntries(activeFilter);
+}
+
+// Render on journal screen open
+const origShowScreen = showScreen;
+window.showScreen = function(id) {
+  origShowScreen(id);
+  if (id === 'journal') renderEntries(activeFilter);
+};
+
+// Initial render if journal is somehow default
+if (document.getElementById('journal').classList.contains('active')) {
+  renderEntries('all');
+}
 
 // ── DEEP LINK: open screen from URL param ──
 const urlParams = new URLSearchParams(window.location.search);
