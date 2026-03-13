@@ -670,6 +670,68 @@
   .empty-journal p { font-size: 0.88rem; line-height: 1.6; }
 
   /* ══════════════════════════════════
+     COMMUNITY SIGNUP SECTION
+  ══════════════════════════════════ */
+  .community-section {
+    background: linear-gradient(135deg, var(--action-darkest) 0%, var(--action-dark) 100%);
+    padding: 52px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .community-section::before {
+    content: '\1F331';
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.06;
+    top: -20px; right: -20px;
+    transform: rotate(15deg);
+  }
+  .community-tag {
+    display: inline-block;
+    background: rgba(158,237,255,0.15);
+    color: var(--accent);
+    font-size: 0.72rem; font-weight: 800;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 100px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(158,237,255,0.25);
+  }
+  .community-h2 {
+    font-family: 'Lora', serif;
+    font-size: 1.9rem; font-weight: 600;
+    color: white; margin-bottom: 10px; line-height: 1.3;
+  }
+  .community-h2 em { font-style: italic; color: var(--accent); }
+  .community-sub {
+    font-size: 0.92rem; color: rgba(255,255,255,0.75);
+    margin-bottom: 28px; max-width: 420px;
+    margin-left: auto; margin-right: auto; line-height: 1.6;
+  }
+  .signup-row {
+    display: flex; gap: 10px;
+    max-width: 420px; margin: 0 auto 12px;
+  }
+  .signup-input {
+    flex: 1; padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid rgba(158,237,255,0.3);
+    background: rgba(255,255,255,0.1);
+    color: white; font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; outline: none; transition: border-color 0.2s;
+  }
+  .signup-input::placeholder { color: rgba(255,255,255,0.45); }
+  .signup-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.15); }
+  .signup-msg { font-size: 0.82rem; min-height: 20px; margin-top: 4px; font-weight: 700; }
+  .signup-msg.success { color: var(--accent); }
+  .signup-msg.error { color: #ffb3b3; }
+  .signup-privacy { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 10px; }
+  @media (max-width: 480px) {
+    .signup-row { flex-direction: column; }
+    .community-h2 { font-size: 1.5rem; }
+  }
+
+  /* ══════════════════════════════════
      ADMIN SCREEN
   ══════════════════════════════════ */
   #admin.active { display: block; animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1); }
@@ -927,6 +989,19 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ════════ COMMUNITY SIGNUP ════════ -->
+<div id="communitySignup" class="community-section">
+  <div class="community-tag">✦ Join the Community</div>
+  <h2 class="community-h2">Get <em>new scenarios</em> delivered to you.</h2>
+  <p class="community-sub">Join other Simmers and be the first to know when new prompts, scenarios, and features drop.</p>
+  <div class="signup-row">
+    <input class="signup-input" id="signupEmail" type="email" placeholder="your@email.com">
+    <button class="btn btn-action" onclick="handleSignup()" style="white-space:nowrap;padding:14px 22px">Join ✦</button>
+  </div>
+  <div class="signup-msg" id="signupMsg"></div>
+  <div class="signup-privacy">No spam, ever. Unsubscribe anytime.</div>
 </div>
 
 <!-- ════════ QUIZ ════════ -->
@@ -1940,6 +2015,63 @@ function renderStats() {
     </div>
   `).join('');
 }
+
+// ══════════════════════════════════════
+// SUPABASE EMAIL SIGNUP
+// ══════════════════════════════════════
+const SUPABASE_URL  = 'https://mpgmgwmtmmxbkgblukgx.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wZ21nd210bW14YmtnYmx1a2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDMxNzksImV4cCI6MjA4ODkxOTE3OX0.qAtLy9tw1HCpCQqJZjX7tusDN-nE_3bNp5uHPr1dnM0';
+
+async function handleSignup() {
+  const email = document.getElementById('signupEmail').value.trim();
+  const msg   = document.getElementById('signupMsg');
+
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Please enter a valid email address.';
+    msg.className = 'signup-msg error';
+    return;
+  }
+
+  const btn = document.querySelector('#communitySignup .btn-action');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/email_signups`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    if (res.status === 201) {
+      msg.textContent = "🌱 You\'re in! Welcome to the community.";
+      msg.className = 'signup-msg success';
+      document.getElementById('signupEmail').value = '';
+      trackEvent('email_signup');
+    } else if (res.status === 409) {
+      msg.textContent = "You\'re already signed up — see you in the newsletter!";
+      msg.className = 'signup-msg success';
+    } else {
+      throw new Error('Unexpected response');
+    }
+  } catch(e) {
+    msg.textContent = 'Something went wrong — please try again.';
+    msg.className = 'signup-msg error';
+  }
+
+  btn.textContent = 'Join ✦';
+  btn.disabled = false;
+}
+
+document.getElementById('signupEmail')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSignup();
+});
+
 </script>
 
 <!-- ════════ ADMIN SCREEN ════════ -->
