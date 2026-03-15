@@ -2268,8 +2268,11 @@ if ('serviceWorker' in navigator) {
 
 // ── PWA: INSTALL BANNER ──
 let deferredPrompt = null;
-const installBanner = document.getElementById('installBanner');
-const iosTip = document.getElementById('iosTip');
+let installBanner, iosTip;
+document.addEventListener('DOMContentLoaded', () => {
+  installBanner = document.getElementById('installBanner');
+  iosTip = document.getElementById('iosTip');
+});
 
 // Detect iOS
 const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -2281,13 +2284,13 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   if (!isInStandaloneMode && !dismissed) {
-    setTimeout(() => installBanner.classList.add('visible'), 3000);
+    setTimeout(() => installBanner && installBanner.classList.add('visible'), 3000);
   }
 });
 
 // iOS: show manual tip instead (Safari doesn't support beforeinstallprompt)
 if (isIos && !isInStandaloneMode && !dismissed) {
-  setTimeout(() => iosTip.classList.add('visible'), 3000);
+  setTimeout(() => iosTip && iosTip.classList.add('visible'), 3000);
 }
 
 function installApp() {
@@ -2295,7 +2298,7 @@ function installApp() {
   deferredPrompt.prompt();
   deferredPrompt.userChoice.then(choice => {
     deferredPrompt = null;
-    installBanner.classList.remove('visible');
+    if (installBanner) installBanner.classList.remove('visible');
     if (choice.outcome === 'accepted') {
       console.log('App installed!');
     }
@@ -2303,14 +2306,14 @@ function installApp() {
 }
 
 function dismissBanner() {
-  installBanner.classList.remove('visible');
-  iosTip.classList.remove('visible');
+  if (installBanner) installBanner.classList.remove('visible');
+  if (iosTip) iosTip.classList.remove('visible');
   sessionStorage.setItem('installDismissed', 'true');
 }
 
 // Hide banner once app is installed
 window.addEventListener('appinstalled', () => {
-  installBanner.classList.remove('visible');
+  if (installBanner) installBanner.classList.remove('visible');
   deferredPrompt = null;
 });
 
