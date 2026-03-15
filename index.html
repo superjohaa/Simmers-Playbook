@@ -2984,6 +2984,71 @@ function openSavedScenario(idx) {
   document.getElementById('htpModal').classList.add('open');
 }
 
+
+// ══════════════════════════════════════
+// ACCOUNT SETTINGS
+// ══════════════════════════════════════
+function openAccountSettings() {
+  if (!currentUser) return;
+  document.getElementById('accountEmail').textContent = currentUser.email;
+  document.getElementById('accountUsername').value = currentUser.username || '';
+  document.getElementById('accountMsg').textContent = '';
+  document.getElementById('accountModal').classList.add('open');
+}
+
+function closeAccountModal(e) {
+  if (e.target === document.getElementById('accountModal')) {
+    document.getElementById('accountModal').classList.remove('open');
+  }
+}
+
+async function saveAccountSettings() {
+  const username = document.getElementById('accountUsername').value.trim();
+  const msg = document.getElementById('accountMsg');
+
+  if (!username) { msg.textContent = 'Please enter a username.'; msg.className = 'auth-msg error'; return; }
+
+  const btn = document.querySelector('#accountModal .btn-primary');
+  btn.textContent = '...'; btn.disabled = true;
+
+  try {
+    const existing = await fetch(
+      `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${currentUser.access_token}` }}
+    );
+    const rows = await existing.json();
+
+    if (rows.length > 0) {
+      await sbFetch('PATCH', `/rest/v1/user_profiles?user_id=eq.${currentUser.id}`, { username });
+    } else {
+      await sbFetch('POST', '/rest/v1/user_profiles', { user_id: currentUser.id, username });
+    }
+
+    currentUser.username = username;
+    localStorage.setItem('sp_session', JSON.stringify(currentUser));
+    updateAuthUI();
+    renderDashboard();
+    msg.textContent = '✓ Username saved!';
+    msg.className = 'auth-msg success';
+    setTimeout(() => document.getElementById('accountModal').classList.remove('open'), 1200);
+  } catch(e) {
+    msg.textContent = 'Something went wrong. Please try again.';
+    msg.className = 'auth-msg error';
+  }
+
+  btn.textContent = '💾 Save Changes'; btn.disabled = false;
+}
+
+function signOut() {
+  currentUser = null;
+  localStorage.removeItem('sp_session');
+  updateAuthUI();
+  renderEntries(activeFilter);
+  showScreen('home');
+  document.getElementById('accountModal').classList.remove('open');
+  showToast('Signed out');
+}
+
 // ══════════════════════════════════════
 // SUPABASE EMAIL SIGNUP
 // ══════════════════════════════════════
@@ -3235,7 +3300,7 @@ async function handleAuth() {
 
 function updateAuthUI() {
   const wrap = document.getElementById('navAuthBtn');
-  const dashTab = document.getElementById('nav-dashboard');
+
   if (!wrap) return;
   if (currentUser) {
     const displayName = currentUser.username || currentUser.email.split('@')[0];
@@ -3245,22 +3310,15 @@ function updateAuthUI() {
         <div class="user-avatar" style="width:28px;height:28px;font-size:0.72rem">${initials}</div>
         <span style="font-size:0.72rem;color:rgba(255,255,255,0.7)">☁️</span>
       </div>`;
-    if (dashTab) dashTab.style.display = '';
+
   } else {
     wrap.innerHTML = '<span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);white-space:nowrap">🔒 Sign In</span>';
-    if (dashTab) dashTab.style.display = 'none';
+
   }
 }
 
 function showUserMenu() {
-  const displayName = currentUser.username ? `${currentUser.username} (${currentUser.email})` : currentUser.email;
-  if (confirm(`Signed in as ${displayName}\n\nClick OK to sign out.`)) {
-    currentUser = null;
-    localStorage.removeItem('sp_session');
-    updateAuthUI();
-    renderEntries(activeFilter);
-    showToast('Signed out');
-  }
+  openAccountSettings();
 }
 
 // ── Import local entries to cloud ──
@@ -3330,6 +3388,26 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
     <span class="footer-admin-link" onclick="showScreen('admin')">⚙ Admin</span>
   </div>
 </footer>
+
+<!-- ════════ ACCOUNT SETTINGS MODAL ════════ -->
+<div class="auth-modal-overlay" id="accountModal" onclick="closeAccountModal(event)">
+  <div class="auth-modal" style="max-width:420px">
+    <button class="auth-close" onclick="document.getElementById('accountModal').classList.remove('open')">×</button>
+    <div class="auth-modal-title">⚙️ Account Settings</div>
+    <div class="auth-modal-sub" id="accountEmail"></div>
+    <div class="auth-form">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Username</label>
+        <input class="form-input" id="accountUsername" type="text" placeholder="e.g. simqueen99" maxlength="30">
+      </div>
+      <div class="auth-msg" id="accountMsg"></div>
+      <button class="btn btn-primary" onclick="saveAccountSettings()" style="justify-content:center">💾 Save Changes</button>
+      <div style="border-top:1px solid var(--bg-mid);padding-top:16px;margin-top:4px">
+        <button class="btn btn-outline" onclick="signOut()" style="justify-content:center;width:100%;color:#e05a5a;border-color:#e05a5a">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ AUTH MODAL ════════ -->
 <div class="auth-modal-overlay" id="authModal" onclick="closeAuthOnOverlay(event)">
