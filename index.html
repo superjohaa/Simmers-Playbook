@@ -669,6 +669,89 @@
   .empty-journal h3 { font-family: 'Lora', serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--ink); }
   .empty-journal p { font-size: 0.88rem; line-height: 1.6; }
 
+
+  /* ══════════════════════════════════
+     AUTH MODAL
+  ══════════════════════════════════ */
+  .auth-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(6,35,18,0.55); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .auth-modal-overlay.open { opacity: 1; pointer-events: all; }
+  .auth-modal {
+    background: var(--white); border-radius: 24px;
+    padding: 36px 32px; width: 100%; max-width: 420px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+    transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .auth-modal-overlay.open .auth-modal { transform: translateY(0); }
+  .auth-modal-title {
+    font-family: 'Lora', serif; font-size: 1.6rem; font-weight: 600;
+    color: var(--ink); margin-bottom: 6px;
+  }
+  .auth-modal-sub { font-size: 0.86rem; color: var(--mid); margin-bottom: 24px; }
+  .auth-tabs {
+    display: flex; gap: 4px; background: var(--bg-pale);
+    border-radius: 10px; padding: 4px; margin-bottom: 24px;
+  }
+  .auth-tab {
+    flex: 1; text-align: center; padding: 8px;
+    font-size: 0.82rem; font-weight: 800; border-radius: 7px;
+    cursor: pointer; color: var(--mid); transition: all 0.2s;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .auth-tab.active {
+    background: var(--white); color: var(--action-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .auth-form { display: flex; flex-direction: column; gap: 14px; }
+  .auth-msg {
+    font-size: 0.82rem; font-weight: 700; min-height: 18px;
+    text-align: center; margin-top: -4px;
+  }
+  .auth-msg.success { color: var(--action); }
+  .auth-msg.error   { color: #e05a5a; }
+  .auth-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; font-size: 1.4rem;
+    cursor: pointer; color: var(--mid); line-height: 1;
+  }
+  .auth-modal { position: relative; }
+  .auth-divider {
+    text-align: center; font-size: 0.75rem; color: var(--mid);
+    margin: 4px 0; position: relative;
+  }
+
+  /* user badge in journal topbar */
+  .user-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.8rem; color: var(--mid); cursor: pointer;
+  }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--action-light); color: var(--action-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 0.82rem;
+  }
+  .sync-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.72rem; font-weight: 800; padding: 3px 10px;
+    border-radius: 100px; margin-left: 8px;
+  }
+  .sync-badge.cloud { background: var(--bg-pale); color: var(--bg-darkest); }
+  .sync-badge.local { background: var(--action-light); color: var(--action-dark); }
+
+  /* import modal */
+  .import-box {
+    background: var(--bg-pale); border-radius: 14px;
+    padding: 20px; border: 2px solid var(--bg-mid);
+    margin-bottom: 18px; text-align: center;
+  }
+  .import-box h4 { color: var(--ink); margin-bottom: 6px; font-size: 1rem; }
+  .import-box p  { color: var(--mid); font-size: 0.84rem; line-height: 1.5; }
+
   /* ══════════════════════════════════
      COMMUNITY SIGNUP SECTION
   ══════════════════════════════════ */
@@ -1199,9 +1282,14 @@
         <div class="journal-title">My Sim Journal</div>
         <div class="journal-sub">Your Sims' stories, logged and remembered. ✦</div>
       </div>
-      <div class="streak-badge">
-        <div class="streak-num" id="streakNum">🔥 0</div>
-        <div class="streak-label">Day Streak</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="streak-badge">
+          <div class="streak-num" id="streakNum">🔥 0</div>
+          <div class="streak-label">Day Streak</div>
+        </div>
+        <div id="journalAuthBtn" onclick="openAuth()" style="cursor:pointer">
+          <button class="btn btn-outline" style="padding:8px 14px;font-size:0.78rem" id="signInBtn">🔒 Sign In</button>
+        </div>
       </div>
     </div>
 
@@ -1441,12 +1529,13 @@ document.querySelectorAll('.jtab').forEach(tab => {
 // ── JOURNAL: localStorage engine ──
 const STORAGE_KEY = 'simmers_journal_entries';
 let activeFilter = 'all';
+let currentUser  = null;
 
+// ── Storage: cloud if logged in, local if not ──
 function loadEntries() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
   catch { return []; }
 }
-
 function saveEntries(entries) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 }
@@ -1511,10 +1600,17 @@ function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function deleteEntry(id) {
+async function deleteEntry(id) {
   if (!confirm('Delete this entry? This cannot be undone.')) return;
-  const entries = loadEntries().filter(e => e.id !== id);
-  saveEntries(entries);
+  if (currentUser) {
+    try {
+      await sbFetch('DELETE', `/rest/v1/journal_entries?id=eq.${id}&user_id=eq.${currentUser.id}`);
+    } catch(e) { console.error('Cloud delete failed', e); }
+    await loadCloudEntries();
+  } else {
+    const entries = loadEntries().filter(e => e.id !== id);
+    saveEntries(entries);
+  }
   renderEntries(activeFilter);
 }
 
@@ -1562,7 +1658,7 @@ function toggleMood(btn) {
   btn.classList.toggle('selected');
 }
 
-function saveEntry() {
+async function saveEntry() {
   const title = document.getElementById('entryTitle').value.trim();
   const body  = document.getElementById('entryBody').value.trim();
   if (!title) { document.getElementById('entryTitle').focus(); document.getElementById('entryTitle').style.borderColor='#e05a5a'; return; }
@@ -1577,9 +1673,25 @@ function saveEntry() {
     moods
   };
 
-  const entries = loadEntries();
-  entries.unshift(entry); // newest first
-  saveEntries(entries);
+  if (currentUser) {
+    // save to Supabase
+    try {
+      await sbFetch('POST', '/rest/v1/journal_entries', {
+        user_id: currentUser.id,
+        title: entry.title,
+        body: entry.body,
+        type: entry.type,
+        moods: entry.moods,
+        created_at: entry.date
+      });
+    } catch(e) { console.error('Cloud save failed', e); }
+    await loadCloudEntries();
+  } else {
+    const entries = loadEntries();
+    entries.unshift(entry);
+    saveEntries(entries);
+  }
+
   trackEvent('journal_entry');
   closeModal();
   renderEntries(activeFilter);
@@ -2072,7 +2184,249 @@ document.getElementById('signupEmail')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSignup();
 });
 
+// ══════════════════════════════════════
+// SUPABASE AUTH + CLOUD JOURNAL
+// ══════════════════════════════════════
+
+function sbFetch(method, path, body) {
+  return fetch(SUPABASE_URL + path, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${currentUser ? currentUser.access_token : SUPABASE_KEY}`,
+      'Prefer': method === 'POST' ? 'return=minimal' : undefined
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+}
+
+// ── Load cloud entries and cache locally ──
+async function loadCloudEntries() {
+  if (!currentUser) return;
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/journal_entries?user_id=eq.${currentUser.id}&order=created_at.desc`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${currentUser.access_token}` } }
+    );
+    const data = await res.json();
+    // normalise to local format
+    const entries = data.map(e => ({
+      id: e.id, date: e.created_at,
+      title: e.title, body: e.body,
+      type: e.type || '', moods: e.moods || []
+    }));
+    saveEntries(entries);
+  } catch(e) { console.error('Cloud load failed', e); }
+}
+
+// ── Auth modal ──
+function openAuth() {
+  if (currentUser) { showUserMenu(); return; }
+  document.getElementById('authModal').classList.add('open');
+  document.getElementById('authEmail').focus();
+}
+
+function closeAuth() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('authMsg').textContent = '';
+}
+
+function closeAuthOnOverlay(e) {
+  if (e.target === document.getElementById('authModal')) closeAuth();
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+  const isSignup = tab === 'signup';
+  document.getElementById('authSubmitBtn').textContent = isSignup ? 'Create Account' : 'Log In';
+  document.getElementById('authSwitch').innerHTML = isSignup
+    ? 'Already have an account? <span style="color:var(--action);cursor:pointer;font-weight:700" onclick="switchAuthTab(\'login\')">Log in</span>'
+    : 'No account yet? <span style="color:var(--action);cursor:pointer;font-weight:700" onclick="switchAuthTab(\'signup\')">Sign up free</span>';
+  document.getElementById('authMsg').textContent = '';
+}
+
+async function handleAuth() {
+  const email    = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const msg      = document.getElementById('authMsg');
+  const btn      = document.getElementById('authSubmitBtn');
+  const isSignup = document.getElementById('tabSignup').classList.contains('active');
+
+  if (!email || !password) { msg.textContent = 'Please fill in both fields.'; msg.className = 'auth-msg error'; return; }
+
+  btn.textContent = '...'; btn.disabled = true;
+
+  const endpoint = isSignup
+    ? `${SUPABASE_URL}/auth/v1/signup`
+    : `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
+
+  try {
+    const res  = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (data.error || data.error_description) throw new Error(data.error_description || data.error || 'Auth failed');
+
+    if (isSignup && !data.access_token) {
+      msg.textContent = '✓ Check your email to confirm your account, then log in!';
+      msg.className = 'auth-msg success';
+      btn.textContent = 'Create Account'; btn.disabled = false;
+      return;
+    }
+
+    // logged in
+    currentUser = {
+      id: data.user.id,
+      email: data.user.email,
+      access_token: data.access_token
+    };
+    localStorage.setItem('sp_session', JSON.stringify(currentUser));
+
+    closeAuth();
+    updateAuthUI();
+    await loadCloudEntries();
+
+    // check for local entries to import
+    const local = JSON.parse(localStorage.getItem(STORAGE_KEY + '_pre_auth') || localStorage.getItem(STORAGE_KEY) || '[]');
+    if (!isSignup && local.length > 0) {
+      checkImport(local);
+    } else if (isSignup) {
+      checkImport(local);
+    }
+
+    renderEntries(activeFilter);
+
+  } catch(e) {
+    msg.textContent = e.message || 'Something went wrong. Please try again.';
+    msg.className = 'auth-msg error';
+  }
+
+  btn.textContent = isSignup ? 'Create Account' : 'Log In';
+  btn.disabled = false;
+}
+
+function updateAuthUI() {
+  const btn = document.getElementById('signInBtn');
+  const wrap = document.getElementById('journalAuthBtn');
+  if (currentUser) {
+    const initials = currentUser.email.substring(0,2).toUpperCase();
+    wrap.innerHTML = `
+      <div class="user-badge" onclick="showUserMenu()">
+        <div class="user-avatar">${initials}</div>
+        <span style="font-size:0.75rem;color:var(--mid)">☁️ Synced</span>
+      </div>`;
+  } else {
+    wrap.innerHTML = '<button class="btn btn-outline" style="padding:8px 14px;font-size:0.78rem" onclick="openAuth()" id="signInBtn">🔒 Sign In</button>';
+  }
+}
+
+function showUserMenu() {
+  if (confirm(`Signed in as ${currentUser.email}\n\nClick OK to sign out.`)) {
+    currentUser = null;
+    localStorage.removeItem('sp_session');
+    updateAuthUI();
+    renderEntries(activeFilter);
+    showToast('Signed out');
+  }
+}
+
+// ── Import local entries to cloud ──
+function checkImport(local) {
+  if (!local || !local.length) return;
+  localStorage.setItem(STORAGE_KEY + '_pre_auth', JSON.stringify(local));
+  document.getElementById('importCount').textContent = `${local.length} ${local.length === 1 ? 'entry' : 'entries'} found on this device`;
+  document.getElementById('importModal').classList.add('open');
+}
+
+async function importLocalEntries() {
+  document.getElementById('importModal').classList.remove('open');
+  const local = JSON.parse(localStorage.getItem(STORAGE_KEY + '_pre_auth') || '[]');
+  if (!local.length || !currentUser) return;
+
+  showToast('Importing entries...');
+  for (const e of local) {
+    try {
+      await sbFetch('POST', '/rest/v1/journal_entries', {
+        user_id: currentUser.id, title: e.title, body: e.body,
+        type: e.type || '', moods: e.moods || [], created_at: e.date
+      });
+    } catch(err) { console.error('Import failed for entry', e.title); }
+  }
+  localStorage.removeItem(STORAGE_KEY + '_pre_auth');
+  await loadCloudEntries();
+  renderEntries(activeFilter);
+  showToast(`✓ ${local.length} entries imported!`);
+}
+
+function skipImport() {
+  document.getElementById('importModal').classList.remove('open');
+  localStorage.removeItem(STORAGE_KEY + '_pre_auth');
+}
+
+// ── Restore session on page load ──
+(function restoreSession() {
+  try {
+    const saved = localStorage.getItem('sp_session');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      updateAuthUI();
+      loadCloudEntries().then(() => renderEntries(activeFilter));
+    }
+  } catch(e) { console.error('Session restore failed', e); }
+})();
+
+
 </script>
+
+
+<!-- ════════ AUTH MODAL ════════ -->
+<div class="auth-modal-overlay" id="authModal" onclick="closeAuthOnOverlay(event)">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAuth()">×</button>
+    <div class="auth-modal-title">Welcome, Simmer ✦</div>
+    <div class="auth-modal-sub">Save your journal to the cloud and access it anywhere.</div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabSignup" onclick="switchAuthTab('signup')">Sign Up</div>
+      <div class="auth-tab" id="tabLogin" onclick="switchAuthTab('login')">Log In</div>
+    </div>
+    <div class="auth-form">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Email</label>
+        <input class="form-input" id="authEmail" type="email" placeholder="your@email.com">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Password</label>
+        <input class="form-input" id="authPassword" type="password" placeholder="At least 6 characters">
+      </div>
+      <div class="auth-msg" id="authMsg"></div>
+      <button class="btn btn-primary" id="authSubmitBtn" onclick="handleAuth()" style="justify-content:center">Create Account</button>
+      <div class="auth-divider" id="authSwitch">
+        Already have an account? <span style="color:var(--action);cursor:pointer;font-weight:700" onclick="switchAuthTab('login')">Log in</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ IMPORT LOCAL ENTRIES MODAL ════════ -->
+<div class="auth-modal-overlay" id="importModal">
+  <div class="auth-modal">
+    <div class="auth-modal-title">Import your entries? 📖</div>
+    <div class="auth-modal-sub">We found journal entries saved on this device.</div>
+    <div class="import-box">
+      <h4 id="importCount"></h4>
+      <p>Would you like to import them to your account so they sync everywhere?</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" onclick="skipImport()" style="flex:1;justify-content:center">Skip</button>
+      <button class="btn btn-primary" onclick="importLocalEntries()" style="flex:1;justify-content:center">Import ✦</button>
+    </div>
+  </div>
+</div>
 
 <!-- ════════ ADMIN SCREEN ════════ -->
 <div id="admin" class="screen">
