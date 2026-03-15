@@ -1806,7 +1806,7 @@ const resultData = {
   }
 };
 
-function calculateResult(finalType, e) {
+async function calculateResult(finalType, e) {
   scores[finalType]++;
   e.currentTarget.classList.add('selected');
   const top = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
