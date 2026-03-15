@@ -251,6 +251,7 @@
       transparent, transparent 30px,
       rgba(57,215,253,0.05) 30px, rgba(57,215,253,0.05) 60px
     );
+    pointer-events: none;
   }
 
   .big-plumbob {
@@ -270,6 +271,7 @@
     display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px;
   }
   .feat-pill {
+    cursor: pointer;
     background: var(--white); border-radius: 14px;
     padding: 16px 20px; display: flex; align-items: center; gap: 14px;
     box-shadow: 0 2px 12px rgba(0,138,126,0.1);
@@ -490,7 +492,21 @@
   }
   .prompt-hint {
     font-size: 0.84rem; color: var(--mid); line-height: 1.65;
-    background: var(--bg-pale); border-radius: 12px; padding: 14px 18px;
+    background: var(--bg-pale); border-radius: 16px; padding: 16px 18px;
+    text-align: left;
+  }
+  .prompt-steps { display: flex; flex-direction: column; gap: 10px; }
+  .prompt-step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0; width: 26px; height: 26px;
+    background: var(--action); color: white;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 900; margin-top: 1px;
+  }
+  .step-text {
+    font-size: 0.83rem; color: var(--ink); line-height: 1.6; flex: 1;
   }
 
   .prompt-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
@@ -669,6 +685,57 @@
   .empty-journal h3 { font-family: 'Lora', serif; font-size: 1.2rem; margin-bottom: 8px; color: var(--ink); }
   .empty-journal p { font-size: 0.88rem; line-height: 1.6; }
 
+
+
+  /* ══════════════════════════════════
+     SITE FOOTER
+  ══════════════════════════════════ */
+  .site-footer {
+    background: var(--action-darkest);
+    padding: 28px 32px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .footer-signup {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .footer-signup-label {
+    font-size: 0.82rem; color: rgba(255,255,255,0.6); white-space: nowrap;
+  }
+  .footer-signup-input {
+    padding: 9px 14px; border-radius: 10px;
+    border: 1.5px solid rgba(158,237,255,0.25);
+    background: rgba(255,255,255,0.08);
+    color: white; font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem; outline: none; width: 200px;
+    transition: border-color 0.2s;
+  }
+  .footer-signup-input::placeholder { color: rgba(255,255,255,0.35); }
+  .footer-signup-input:focus { border-color: var(--accent); }
+  .footer-signup-btn {
+    padding: 9px 16px; border-radius: 10px;
+    background: var(--action); color: white; border: none;
+    font-family: 'Nunito', sans-serif; font-weight: 800;
+    font-size: 0.78rem; cursor: pointer; transition: background 0.2s;
+  }
+  .footer-signup-btn:hover { background: var(--action-dark); }
+  .footer-signup-msg {
+    font-size: 0.75rem; font-weight: 700;
+    min-height: 16px; margin-top: -8px; margin-bottom: 8px;
+  }
+  .footer-signup-msg.success { color: var(--accent); }
+  .footer-signup-msg.error   { color: #ffb3b3; }
+  .footer-bottom {
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
+  .footer-admin-link {
+    font-size: 0.68rem; color: rgba(255,255,255,0.2);
+    cursor: pointer; transition: color 0.2s; text-decoration: none;
+  }
+  .footer-admin-link:hover { color: rgba(255,255,255,0.5); }
 
   /* ══════════════════════════════════
      AUTH MODAL
@@ -1012,7 +1079,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="logo">
+  <div class="logo" onclick="showScreen('home')" style="cursor:pointer">
     <div class="logo-pb-wrap"><div class="logo-pb"></div></div>
     The Simmer's Playbook
   </div>
@@ -1021,7 +1088,9 @@
     <a onclick="showScreen('quiz')"   id="nav-quiz">Quiz</a>
     <a onclick="showScreen('prompt')" id="nav-prompt">Prompts</a>
     <a onclick="showScreen('journal')"id="nav-journal">Journal</a>
-    <a onclick="showScreen('admin')"  id="nav-admin" style="opacity:0.4;font-size:0.7rem">⚙</a>
+    <div id="navAuthBtn" onclick="openAuth()" style="display:flex;align-items:center;cursor:pointer;margin-left:4px">
+      <span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);transition:all 0.2s;white-space:nowrap">🔒 Sign In</span>
+    </div>
   </div>
 </nav>
 
@@ -1072,24 +1141,27 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- ════════ COMMUNITY SIGNUP ════════ -->
-<div id="communitySignup" class="community-section">
-  <div class="community-tag">✦ Join the Community</div>
-  <h2 class="community-h2">Get <em>new scenarios</em> delivered to you.</h2>
-  <p class="community-sub">Join other Simmers and be the first to know when new prompts, scenarios, and features drop.</p>
-  <div class="signup-row">
-    <input class="signup-input" id="signupEmail" type="email" placeholder="your@email.com">
-    <button class="btn btn-action" onclick="handleSignup()" style="white-space:nowrap;padding:14px 22px">Join ✦</button>
+  <!-- Community signup — home screen only, full size -->
+  <div id="communitySignup" class="community-section">
+    <div class="community-tag">✦ Join the Community</div>
+    <h2 class="community-h2">Get <em>new scenarios</em> delivered to you.</h2>
+    <p class="community-sub">Join other Simmers and be the first to know when new prompts, scenarios, and features drop.</p>
+    <div class="signup-row">
+      <input class="signup-input" id="signupEmail" type="email" placeholder="your@email.com">
+      <button class="btn btn-action" onclick="handleSignup()" style="white-space:nowrap;padding:14px 22px">Join ✦</button>
+    </div>
+    <div class="signup-msg" id="signupMsg"></div>
+    <div class="signup-privacy">No spam, ever. Unsubscribe anytime.</div>
   </div>
-  <div class="signup-msg" id="signupMsg"></div>
-  <div class="signup-privacy">No spam, ever. Unsubscribe anytime.</div>
 </div>
 
 <!-- ════════ QUIZ ════════ -->
 <div id="quiz" class="screen">
   <div class="quiz-wrapper">
+    <div id="scenarioNudge" style="display:none;background:var(--bg-pale);border:2px solid var(--bg-mid);border-radius:14px;padding:14px 18px;margin-bottom:20px;text-align:center;font-size:0.88rem;color:var(--action-dark);font-weight:700;animation:fadeUp 0.4s ease">
+      🗺️ Complete the quiz to unlock your personalised scenarios!
+    </div>
     <div class="progress-row">
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
       <div class="progress-label" id="progressLabel">1 / 5</div>
@@ -1265,7 +1337,7 @@
     <div class="prompt-card" id="promptCard">
       <div class="prompt-category" id="promptCategory">🌧️ Life Shake-Up</div>
       <div class="prompt-text" id="promptText">"Your Sim was just laid off. They have §2,000, one week, and absolutely no plan. What happens next?"</div>
-      <div class="prompt-hint" id="promptHint">Try playing this without reloading no matter what happens — the best Sims stories come from the unexpected.</div>
+      <div class="prompt-hint" id="promptHint"></div>
     </div>
     <div class="prompt-actions">
       <button class="btn btn-action" onclick="randomPrompt()">🎲 New Prompt</button>
@@ -1286,9 +1358,6 @@
         <div class="streak-badge">
           <div class="streak-num" id="streakNum">🔥 0</div>
           <div class="streak-label">Day Streak</div>
-        </div>
-        <div id="journalAuthBtn" onclick="openAuth()" style="cursor:pointer">
-          <button class="btn btn-outline" style="padding:8px 14px;font-size:0.78rem" id="signInBtn">🔒 Sign In</button>
         </div>
       </div>
     </div>
@@ -1476,6 +1545,15 @@ function calculateResult(finalType, e) {
   trackEvent('quiz_complete');
 }
 
+function goToScenarios() {
+  showScreen('quiz');
+  const nudge = document.getElementById('scenarioNudge');
+  if (nudge) {
+    nudge.style.display = 'block';
+    setTimeout(() => { nudge.style.display = 'none'; }, 4000);
+  }
+}
+
 function retakeQuiz() {
   Object.keys(scores).forEach(k => scores[k] = 0);
   document.querySelectorAll('.question-step').forEach((q,i) => {
@@ -1490,19 +1568,40 @@ function retakeQuiz() {
 
 // ── RANDOM PROMPTS ──
 const prompts = [
-  { cat:'🌧️ Life Shake-Up',      text:'"Your Sim was just laid off. They have §2,000, one week, and absolutely no plan. What happens next?"', hint:'Try playing without reloading no matter what — the best stories come from the unexpected.' },
-  { cat:'👻 Mysterious Neighbour', text:'"A stranger moves in next door with a secret. Your Sim senses something is off — but can\'t prove it."', hint:'Don\'t use cheats to reveal the secret. Let your Sim figure it out naturally over time.' },
-  { cat:'💔 Old Flame',            text:'"Someone your Sim loved once just came back. They\'ve clearly changed. So has your Sim. Play what happens."', hint:'Let the relationship meter be your guide. Don\'t force a happy ending.' },
-  { cat:'🎪 Wrong Kind of Famous', text:'"Your Sim accidentally became famous for all the wrong reasons. They have to manage the fallout."', hint:'Lean into the embarrassment moodlets — they\'re telling a story.' },
-  { cat:'🐾 Unexpected Commitment', text:'"Your Sim finds a stray animal. They cannot afford it. They take it in anyway."', hint:'Don\'t adjust their budget. Make it work with exactly what they have.' },
-  { cat:'🏚️ The Inheritance',      text:'"A relative just passed and left your Sim a house in a neighbourhood they\'ve never been to."', hint:'Move them in immediately. Don\'t redecorate. Discover who lived there before.' },
-  { cat:'🌱 Starting Over',        text:'"Your Sim walks away from everything — career, home, relationships — and starts completely fresh."', hint:'Give them §1,000 and a tiny lot. They\'re a new person. Play it that way.' },
-  { cat:'🎭 Hidden Identity',      text:'"Play a Sim who is secretly nothing like the person they present to the world."', hint:'Create two trait sets — one public, one private. The gap between them is the story.' },
-  { cat:'💰 Rags to Riches',       text:'"Start with §0, no house, and one skill at level 1. The city is yours to conquer."', hint:'Classic challenge, but try picking a skill you\'ve never used before.' },
-  { cat:'🌙 Night Owl Run',        text:'"Your Sim can only be awake between 8pm and 6am. Everything they do happens at night."', hint:'Great for exploring Vampire gameplay or the bar/music career path.' },
+  { cat:'🌧️ Life Shake-Up', text:'"Your Sim was just laid off. They have §2,000, one week, and absolutely no plan. What happens next?"', hint:'Step 1: Create a Young Adult Sim with the Clumsy, Hot-Headed, or Lazy trait — someone who was probably not great at their job. Give them §2,000 in household funds (use the money cheat: testingcheats true, then money 2000). Step 2: Move them into the cheapest lot you can find, fully furnished if needed. Step 3: No job searching for the first 3 Sim days — let them spiral a little first. Wander, eat cheaply, make awkward social calls. Step 4: On day 4, let them decide their next move organically. Do they call an old contact? Start a hustle from home? Beg a neighbour for help? Step 5: No reloading saves. Whatever happens — eviction, new romance, rock bottom — that IS the story. The mess is the point.' },
+  { cat:'👻 Mysterious Neighbour', text:'"A stranger moves in next door with a secret. Your Sim senses something is off — but can\'t prove it."', hint:'Step 1: Move your main Sim into any residential lot. Then use Manage Worlds to move a pre-made Sim (Vladislaus Straud or a custom Sim with Loner, Paranoid, and Gloomy traits) into the house directly next door. Step 2: The rule — your Sim can only learn the neighbour\'s secret through natural gameplay. No clicking on their traits or using cheats. Visit them, invite them over, try to become friends. Step 3: Watch their behaviour. Do they disappear at certain times? Refuse to come over during the day? React strangely to certain conversations? Build your story around what you observe. Step 4: Set a goal — your Sim has 2 Sim weeks to figure out the secret. Whatever your gut says by then becomes the truth. Write it in your journal.' },
+  { cat:'💔 Old Flame', text:'"Someone your Sim loved once just came back. They\'ve clearly changed. So has your Sim. Play what happens."', hint:'Step 1: Start with an existing Sim who has a relationship history — or create one and give them a brief "past" in your head before playing. Give them the Romantic or Jealous trait. Step 2: In Manage Worlds, move a second Sim into the same neighbourhood. This is the ex. Give them traits that feel like someone who has grown — Ambitious, Self-Assured, maybe Creative. Step 3: Engineer a first encounter. Have your Sim run into them at a café, a park, or a mutual friend\'s house. Do not immediately pursue romance. Step 4: Let the relationship meter guide everything. If it climbs fast, lean into it. If interactions keep going awkward or tense, that\'s your story — not every reunion has a happy ending. Step 5: Give yourself a 3 Sim week deadline. Whatever state the relationship is in by then is how it ends.' },
+  { cat:'🎪 Wrong Kind of Famous', text:'"Your Sim accidentally became famous for all the wrong reasons. They have to manage the fallout."', hint:'Step 1: You\'ll need the Get Famous expansion for this one. Create a Sim with the Outgoing and Goofball traits — someone who does things without thinking. Step 2: Send them to a public event or a lot with lots of NPCs and do the most embarrassing socials you can — Tell Dramatic Story, Prank Call, Discuss Conspiracy Theories loudly. Let the Fame bar fill from chaos rather than talent. Step 3: Once they hit Celebrity Level 2 or above, the moodlets and reputation system kicks in. Lean into every negative moodlet. Don\'t fix their reputation — manage the spiral instead. Step 4: Create a personal rule: your Sim cannot actively try to rebuild their image for the first 2 weeks. They can only react to what happens to them. Step 5: Document every embarrassing event. The more chaotic the better.' },
+  { cat:'🐾 Unexpected Commitment', text:'"Your Sim finds a stray animal. They cannot afford it. They take it in anyway."', hint:'Step 1: You\'ll need the Cats and Dogs expansion. Create a Sim who is financially struggling — use money 2000 to set their funds to §2,000. Give them the Loves Outdoors or Squeamish trait. Step 2: Move them into a small starter home. No pet supplies purchased in advance — they weren\'t planning this. Step 3: Go for a walk in the neighbourhood or visit a park until a stray appears. When it does, your Sim must adopt it immediately — no waiting or preparing. Step 4: Now figure it out. Sell furniture if needed. Pick up odd jobs. The pet\'s needs come before your Sim\'s comfort — that\'s the rule. Step 5: Give yourself a 2 week goal: get both the Sim and the pet to a stable, happy situation. No cheats. No freebies. The struggle is the story.' },
+  { cat:'🏚️ The Inheritance', text:'"A relative just passed and left your Sim a house in a neighbourhood they\'ve never been to."', hint:'Step 1: In Manage Worlds, choose a pre-existing lot in any neighbourhood and note its address. This is the inherited house. Step 2: Create your Sim and move them in immediately — do not renovate or redecorate anything for at least 5 Sim days. You are discovering this space for the first time. Explore every room. Notice what\'s there. Step 3: Make up the story of who lived there. Look at the existing furniture, the layout, the neighbourhood. Was the relative old? Eccentric? Reclusive? Write it in your journal. Step 4: On day 6, your Sim can start making it their own — but only one room at a time, and only as they earn the money. No full renovations. Step 5: Introduce yourself to every neighbour within the first week. Their reactions become part of the story of who your relative was.' },
+  { cat:'🌱 Starting Over', text:'"Your Sim walks away from everything — career, home, relationships — and starts completely fresh."', hint:'Step 1: If you have an existing Sim, this prompt works best with them — the weight of what they\'re leaving makes it real. If starting fresh, create a Sim and then imagine a full life they\'ve just walked away from. Step 2: Set their funds to §1,000 using the money cheat. Move them to the smallest, cheapest lot available — unfurnished if possible. Step 3: They cannot contact anyone from their old life for the first 2 Sim weeks. No old friends, no family, no exes. New neighbourhood, new faces only. Step 4: Pick one skill to build from scratch. This becomes their new identity. Let everything else follow from that choice. Step 5: At the end of week 2, your Sim gets to make one choice about the past — reconnect with one person, or let go permanently. Whatever you choose in that moment is the ending.' },
+  { cat:'🎭 Hidden Identity', text:'"Play a Sim who is secretly nothing like the person they present to the world."', hint:'Step 1: Create your Sim and pick two sets of traits in your head before you start. Public traits — the face they show the world — could be Cheerful, Outgoing, Ambitious. Private traits — who they actually are — could be Mean, Jealous, Gloomy. Write both lists down. Step 2: When your Sim is around other Sims, only use socials that fit the public persona. Friendly greetings, polite conversations, supportive comments. Step 3: When your Sim is alone at home, play the private persona fully. Let the real moodlets show. Let them be messy, dark, complicated. Step 4: The tension is the whole game — how long can they keep it up? Introduce a Sim they genuinely like and watch the private self start to leak through. Step 5: Set a breaking point — a moment where the two identities collide. Play through it without reloading. Whatever happens is the truth about your Sim.' },
+  { cat:'💰 Rags to Riches', text:'"Start with §0, no house, and one skill at level 1. The city is yours to conquer."', hint:'Step 1: Create your Sim and use the money cheat to set funds to §0 (money 0). Do not move them onto a residential lot — instead use the Homeless challenge setup: place them on an empty lot with no structures. Step 2: Pick one skill before you start and commit to it as your Sim\'s primary income source. Painting, Fishing, Programming, Gardening, Music — choose something you haven\'t maxed before. Step 3: Your Sim must sleep on park benches or community lots until they can afford a basic shelter. No skipping this phase — it\'s the whole first chapter. Step 4: Every §1,000 milestone is a new chapter. Document what changes at each one. What do they buy first? What do they sacrifice? Step 5: The end goal is a fully furnished home earned entirely through that one skill. No switching careers or skills when it gets hard.' },
+  { cat:'🌙 Night Owl Run', text:'"Your Sim can only be awake between 8pm and 6am. Everything they do happens at night."', hint:'Step 1: Create your Sim with the Night Owl trait if available, plus one of: Loner, Gloomy, or Romantic. These feel right for someone who lives after dark. Step 2: The rule is strict — your Sim must be asleep or in bed by 6am and cannot get up before 8pm. Use an alarm or just be disciplined about it. Step 3: Build their entire life around what\'s available at night. The bar career, Musician career, or Freelance Writer all work well. Fishing, stargazing, and the Observatory are great night activities. Step 4: If you have Vampires, this is a perfect run for a Vampire Sim — the night restriction becomes lore rather than a rule. If you don\'t, the challenge is about a Sim who simply belongs to the dark. Step 5: The social challenge is the interesting part — nearly everyone your Sim meets will be at a bar, a club, or doing something a little edgy. Let that shape who they become.' },
 ];
 
 let lastPromptIdx = 0;
+
+// Format hint text — splits "Step N:" into visual step cards
+function formatHint(hint) {
+  if (!hint) return '';
+  // split on "Step N:" pattern
+  const parts = hint.split(/(?=Step \d+:)/);
+  if (parts.length <= 1) {
+    return `<div style="font-size:0.83rem;color:var(--ink);line-height:1.6">${hint}</div>`;
+  }
+  const steps = parts.filter(p => p.trim());
+  const preText = `<div style="text-align:center;margin-bottom:12px"><div style="font-size:0.75rem;font-weight:800;color:var(--action);text-transform:uppercase;letter-spacing:0.08em">📋 Step-by-step setup guide</div><div style="font-size:0.72rem;color:var(--mid);margin-top:3px;font-style:italic">Follow along or just use it as inspiration!</div></div>`;
+  return preText + '<div class="prompt-steps">' + steps.map(step => {
+    const match = step.match(/^Step (\d+):\s*(.*)/s);
+    if (!match) return `<div style="font-size:0.83rem;color:var(--mid);line-height:1.6">${step}</div>`;
+    return `<div class="prompt-step">
+      <div class="step-num">${match[1]}</div>
+      <div class="step-text">${match[2].trim()}</div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
 function randomPrompt() {
   let idx;
   do { idx = Math.floor(Math.random() * prompts.length); } while (idx === lastPromptIdx);
@@ -1514,7 +1613,7 @@ function randomPrompt() {
   card.classList.add('flipping');
   document.getElementById('promptCategory').textContent = p.cat;
   document.getElementById('promptText').textContent = p.text;
-  document.getElementById('promptHint').textContent = p.hint;
+  document.getElementById('promptHint').innerHTML = formatHint(p.hint);
   trackEvent('prompt_flip');
 }
 
@@ -1702,12 +1801,45 @@ const origShowScreen = showScreen;
 window.showScreen = function(id) {
   origShowScreen(id);
   if (id === 'journal') renderEntries(activeFilter);
+  if (id === 'prompt' && lastPromptIdx === -1) randomPrompt();
+  // hide footer on admin screen
+  const footer = document.getElementById('siteFooter');
+  if (footer) footer.style.display = id === 'admin' ? 'none' : '';
+
+  // hide footer signup on home (already shown in hero section)
+  const footerRow = document.getElementById('footerSignupRow');
+  const footerMsg = document.getElementById('footerSignupMsg');
+  const footerLabel = document.getElementById('footerSignupLabel');
+  if (footerRow) {
+    const isHome = id === 'home';
+    footerRow.style.display = isHome ? 'none' : '';
+    if (footerMsg) footerMsg.style.display = isHome ? 'none' : '';
+  }
+  // contextual signup label per page
+  if (footerLabel) {
+    const labels = {
+      quiz:    '📬 Get your quiz results sent to your email:',
+      result:  '📬 Get your quiz results sent to your email:',
+      prompt:  '🎲 Get new prompts delivered to your inbox:',
+      journal: '📖 Get journaling tips and new scenarios by email:',
+      admin:   '🌱 Get new scenarios delivered:'
+    };
+    footerLabel.textContent = labels[id] || '🌱 Get new scenarios delivered:';
+  }
 };
 
 // Initial render if journal is somehow default
 if (document.getElementById('journal').classList.contains('active')) {
   renderEntries('all');
 }
+
+// Hide footer signup on home on initial load
+(function() {
+  const row = document.getElementById('footerSignupRow');
+  const msg = document.getElementById('footerSignupMsg');
+  if (row) row.style.display = 'none';
+  if (msg) msg.style.display = 'none';
+})();
 
 // ── DEEP LINK: open screen from URL param ──
 const urlParams = new URLSearchParams(window.location.search);
@@ -1812,6 +1944,9 @@ function switchAdminTab(panel, el) {
   document.getElementById(panelId).classList.add('active');
   if (panel === 'stats') renderStats();
   if (panel === 'export') document.getElementById('exportPreview').style.display = 'none';
+  if (panel === 'siteEditor') populateSiteEditor();
+  if (panel === 'prompts') renderAdminPrompts();
+  if (panel === 'scenarios') renderAdminScenarios();
 }
 
 // ── Toast ──
@@ -1850,22 +1985,25 @@ loadCustomScenarios();
 
 // ── Add prompt ──
 function addPrompt() {
-  const cat   = document.getElementById('newPromptCat').value.trim();
-  const text  = document.getElementById('newPromptText').value.trim();
-  const hint  = document.getElementById('newPromptHint').value.trim();
-  if (!cat || !text || !hint) { showToast('⚠️ Please fill in all fields'); return; }
+  const emoji   = document.getElementById('newPromptEmojiCustom').value.trim()
+                || document.getElementById('newPromptEmoji').value;
+  const catName = document.getElementById('newPromptCatName').value.trim();
+  const text    = document.getElementById('newPromptText').value.trim();
+  const hint    = document.getElementById('newPromptHint').value.trim();
+  if (!catName || !text || !hint) { showToast('⚠️ Please fill in category, prompt and tip'); return; }
+  const cat = (emoji ? emoji + ' ' : '') + catName;
 
   const entry = { cat, text, hint };
   const stored = getAdminPrompts();
   stored.push(entry);
   localStorage.setItem(ADMIN_PROMPTS_KEY, JSON.stringify(stored));
-
-  // add to live array immediately
   prompts.push(entry);
 
-  // clear fields
-  ['newPromptCat','newPromptText','newPromptHint'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('newPromptColor').value = '';
+  document.getElementById('newPromptEmojiCustom').value = '';
+  document.getElementById('newPromptEmoji').value = '';
+  document.getElementById('newPromptCatName').value = '';
+  document.getElementById('newPromptText').value = '';
+  document.getElementById('newPromptHint').value = '';
 
   renderAdminPrompts();
   showToast('✓ Prompt added!');
@@ -1873,13 +2011,16 @@ function addPrompt() {
 
 // ── Add scenario ──
 function addScenario() {
-  const type  = document.getElementById('newScenType').value;
-  const tag   = document.getElementById('newScenTag').value.trim();
-  const title = document.getElementById('newScenTitle').value.trim();
-  const desc  = document.getElementById('newScenDesc').value.trim();
+  const type     = document.getElementById('newScenType').value;
+  const emoji    = document.getElementById('newScenEmojiCustom').value.trim()
+                 || document.getElementById('newScenEmoji').value;
+  const tagName  = document.getElementById('newScenTagName').value.trim();
+  const tag      = (emoji ? emoji + ' ' : '') + tagName;
+  const title    = document.getElementById('newScenTitle').value.trim();
+  const desc     = document.getElementById('newScenDesc').value.trim();
   const tagClass = document.getElementById('newScenColor').value;
 
-  if (!type || !tag || !title || !desc) { showToast('⚠️ Please fill in all fields'); return; }
+  if (!type || !tagName || !title || !desc) { showToast('⚠️ Please fill in all fields'); return; }
 
   const entry = { type, tag, tagClass, title, desc };
   const stored = getAdminScenarios();
@@ -1890,7 +2031,9 @@ function addScenario() {
   if (resultData[type]) resultData[type].scenarios.push({ title, desc, tag, tagClass });
 
   // clear fields
-  ['newScenType','newScenTag','newScenTitle','newScenDesc'].forEach(id => document.getElementById(id).value = '');
+  ['newScenType','newScenTagName','newScenTitle','newScenDesc'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('newScenEmoji').value = '';
+  document.getElementById('newScenEmojiCustom').value = '';
 
   renderAdminScenarios();
   showToast('✓ Scenario added!');
@@ -1925,51 +2068,69 @@ function deleteScenario(idx) {
 // ── Render prompt list ──
 function renderAdminPrompts() {
   const stored = getAdminPrompts();
-  const list = document.getElementById('promptList');
-  const count = document.getElementById('promptCount');
-  const total = prompts.length;
-  const custom = stored.length;
-  count.textContent = `${total} total (${custom} added by you, ${total - custom} built-in)`;
+  const pov    = getPromptOverrides();
+  const list   = document.getElementById('promptList');
+  const count  = document.getElementById('promptCount');
+  count.textContent = `${prompts.length} total (${stored.length} added by you, ${prompts.length - stored.length} built-in)`;
 
-  if (stored.length === 0) {
-    list.innerHTML = '<div style="text-align:center;color:var(--mid);font-size:0.88rem;padding:20px">No custom prompts yet — add your first one above!</div>';
-    return;
-  }
-  list.innerHTML = stored.map((p, i) => `
-    <div class="admin-item">
-      <div class="admin-item-content">
-        <div class="admin-item-cat">${p.cat}</div>
-        <div class="admin-item-text">${p.text}</div>
-        <div class="admin-item-hint">${p.hint}</div>
-      </div>
-      <button class="admin-item-delete" onclick="deletePrompt(${i})" title="Delete">✕</button>
-    </div>
-  `).join('');
+  // show ALL prompts with edit button; custom ones also get delete
+  const builtInCount = prompts.length - stored.length;
+  list.innerHTML = prompts.map((p, i) => {
+    const isCustom = i >= builtInCount;
+    const customIdx = isCustom ? i - builtInCount : null;
+    const edited = pov[i] ? ' <span style="font-size:0.68rem;color:var(--mid)">(edited)</span>' : '';
+    return `
+      <div class="admin-item">
+        <div class="admin-item-content">
+          <div class="admin-item-cat">${p.cat}${edited}</div>
+          <div class="admin-item-text">${p.text}</div>
+          <div class="admin-item-hint">${p.hint}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <button class="admin-item-delete" style="color:var(--action);background:var(--action-light)" onclick="openEditPrompt(${i})" title="Edit">✏️</button>
+          ${isCustom ? `<button class="admin-item-delete" onclick="deletePrompt(${customIdx})" title="Delete">✕</button>` : ''}
+          ${pov[i] ? `<button class="admin-item-delete" onclick="resetPrompt(${i})" title="Reset">↩</button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ── Render scenario list ──
 function renderAdminScenarios() {
-  const stored = getAdminScenarios();
-  const list = document.getElementById('scenarioList');
-  const count = document.getElementById('scenarioCount');
-  count.textContent = `${stored.length} custom scenario${stored.length !== 1 ? 's' : ''}`;
-
-  if (stored.length === 0) {
-    list.innerHTML = '<div style="text-align:center;color:var(--mid);font-size:0.88rem;padding:20px">No custom scenarios yet — add your first one above!</div>';
-    return;
-  }
-
+  const stored  = getAdminScenarios();
+  const sov     = getScenarioOverrides();
+  const list    = document.getElementById('scenarioList');
+  const count   = document.getElementById('scenarioCount');
   const typeLabels = { storyteller:'🎭 Storyteller', builder:'🏠 Architect', chaos:'🔥 Chaos Gremlin', explorer:'🧭 Completionist' };
-  list.innerHTML = stored.map((s, i) => `
-    <div class="admin-item">
-      <div class="admin-item-content">
-        <div class="admin-item-cat">${typeLabels[s.type] || s.type} · <span class="sc-tag ${s.tagClass}" style="font-size:0.7rem;padding:2px 8px">${s.tag}</span></div>
-        <div class="admin-item-text" style="font-weight:700">${s.title}</div>
-        <div class="admin-item-hint">${s.desc}</div>
-      </div>
-      <button class="admin-item-delete" onclick="deleteScenario(${i})" title="Delete">✕</button>
-    </div>
-  `).join('');
+
+  let total = 0;
+  Object.values(resultData).forEach(d => total += d.scenarios.length);
+  count.textContent = `${total} total (${stored.length} added by you)`;
+
+  let html = '';
+  Object.entries(resultData).forEach(([type, data]) => {
+    data.scenarios.forEach((s, idx) => {
+      const key = type + '__' + idx;
+      const edited = sov[key] ? ' <span style="font-size:0.68rem;color:var(--mid)">(edited)</span>' : '';
+      // check if this is a custom scenario (stored array)
+      const customIdx = stored.findIndex(cs => cs.type === type && cs.title === s.title);
+      const isCustom  = customIdx > -1;
+      html += `
+        <div class="admin-item">
+          <div class="admin-item-content">
+            <div class="admin-item-cat">${typeLabels[type]}${edited}</div>
+            <div class="admin-item-text" style="font-weight:700">${s.title}</div>
+            <div class="admin-item-hint">${s.desc}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+            <button class="admin-item-delete" style="color:var(--action);background:var(--action-light)" onclick="openEditScenario('${type}',${idx})" title="Edit">✏️</button>
+            ${isCustom ? `<button class="admin-item-delete" onclick="deleteScenario(${customIdx})" title="Delete">✕</button>` : ''}
+            ${sov[key] ? `<button class="admin-item-delete" onclick="resetScenario('${type}',${idx})" title="Reset">↩</button>` : ''}
+          </div>
+        </div>`;
+    });
+  });
+  list.innerHTML = html || '<div style="text-align:center;color:var(--mid);font-size:0.88rem;padding:20px">No scenarios yet.</div>';
 }
 
 // ══════════════════════════════════════
@@ -2128,6 +2289,264 @@ function renderStats() {
   `).join('');
 }
 
+
+
+// Emoji picker sync helpers
+function syncEmoji(prefix) {
+  const sel = document.getElementById(prefix === 'new' ? 'newPromptEmoji' : prefix === 'scen' ? 'newScenEmoji' : null);
+  const inp = document.getElementById(prefix === 'new' ? 'newPromptEmojiCustom' : prefix === 'scen' ? 'newScenEmojiCustom' : null);
+  if (sel && inp && sel.value) inp.value = sel.value;
+}
+function syncEmojiCustom(prefix) {
+  const sel = document.getElementById(prefix === 'new' ? 'newPromptEmoji' : prefix === 'scen' ? 'newScenEmoji' : null);
+  if (sel) sel.value = '';
+}
+
+// ══════════════════════════════════════
+// SITE EDITOR
+// ══════════════════════════════════════
+const OVERRIDES_KEY   = 'sp_site_overrides';
+const PROMPT_OV_KEY   = 'sp_prompt_overrides';
+const SCENARIO_OV_KEY = 'sp_scenario_overrides';
+
+function getSiteOverrides()    { try { return JSON.parse(localStorage.getItem(OVERRIDES_KEY))   || {}; } catch(e){ return {}; } }
+function getPromptOverrides()  { try { return JSON.parse(localStorage.getItem(PROMPT_OV_KEY))   || {}; } catch(e){ return {}; } }
+function getScenarioOverrides(){ try { return JSON.parse(localStorage.getItem(SCENARIO_OV_KEY)) || {}; } catch(e){ return {}; } }
+
+// Apply all saved overrides on page load
+function applyAllOverrides() {
+  const ov = getSiteOverrides();
+  if (ov.heroTag)         { const el = document.querySelector('.hero-tag'); if(el) el.textContent = ov.heroTag; }
+  if (ov.heroTitle)       { const el = document.querySelector('.hero-h1');  if(el) el.textContent = ov.heroTitle; }
+  if (ov.heroSub)         { const el = document.querySelector('.hero-sub'); if(el) el.textContent = ov.heroSub; }
+  if (ov.btn1)            { const el = document.querySelector('.hero-btns .btn-action'); if(el) el.textContent = ov.btn1; }
+  if (ov.btn2)            { const el = document.querySelector('.hero-btns .btn-outline'); if(el) el.textContent = ov.btn2; }
+  if (ov.signupHeadline)  { const el = document.querySelector('.community-h2'); if(el) el.textContent = ov.signupHeadline; }
+  if (ov.signupSub)       { const el = document.querySelector('.community-sub'); if(el) el.textContent = ov.signupSub; }
+  if (ov.siteName)        { const el = document.querySelector('.logo'); if(el) { const pb = el.querySelector('.logo-pb-wrap'); el.innerHTML = ''; if(pb) el.appendChild(pb); el.appendChild(document.createTextNode(' ' + ov.siteName)); el.onclick = () => showScreen('home'); el.style.cursor = 'pointer'; } }
+  if (ov.pageTitle)       { document.title = ov.pageTitle; }
+
+  // apply prompt overrides to live array
+  const pov = getPromptOverrides();
+  Object.entries(pov).forEach(([idx, p]) => {
+    if (prompts[idx]) Object.assign(prompts[idx], p);
+  });
+
+  // apply scenario overrides to resultData
+  const sov = getScenarioOverrides();
+  Object.entries(sov).forEach(([key, s]) => {
+    const [type, idxStr] = key.split('__');
+    const idx = parseInt(idxStr);
+    if (resultData[type] && resultData[type].scenarios[idx]) {
+      Object.assign(resultData[type].scenarios[idx], s);
+    }
+  });
+}
+applyAllOverrides();
+
+// ── Populate site editor fields ──
+function populateSiteEditor() {
+  const ov = getSiteOverrides();
+  document.getElementById('editHeroTag').value   = ov.heroTag   || document.querySelector('.hero-tag')?.textContent || '';
+  document.getElementById('editHeroTitle').value = (ov.heroTitle || 'Find your next great Sims story.').replace(/<[^>]+>/g,'');
+  document.getElementById('editHeroSub').value   = ov.heroSub   || document.querySelector('.hero-sub')?.textContent || '';
+  document.getElementById('editBtn1').value      = ov.btn1      || '✦ Find My Playstyle';
+  document.getElementById('editBtn2').value      = ov.btn2      || '🎲 Random Prompt';
+  document.getElementById('editSignupHeadline').value = (ov.signupHeadline || 'Get new scenarios delivered to you.').replace(/<[^>]+>/g,'');
+  document.getElementById('editSignupSub').value      = ov.signupSub      || document.querySelector('.community-sub')?.textContent || '';
+  document.getElementById('editSiteName').value  = ov.siteName  || "The Simmer\'s Playbook";
+  document.getElementById('editPageTitle').value = ov.pageTitle || document.title;
+  renderAllPromptsList();
+  renderAllScenariosList();
+}
+
+// ── Save home page edits ──
+function saveHomeEdits() {
+  const ov = getSiteOverrides();
+  ov.heroTag        = document.getElementById('editHeroTag').value.trim();
+  const rawTitle = document.getElementById('editHeroTitle').value.trim();
+  ov.heroTitle = rawTitle; // saved as plain text, displayed as-is
+  ov.heroSub        = document.getElementById('editHeroSub').value.trim();
+  ov.btn1           = document.getElementById('editBtn1').value.trim();
+  ov.btn2           = document.getElementById('editBtn2').value.trim();
+  ov.signupHeadline = document.getElementById('editSignupHeadline').value.trim(); // stored as plain text
+  ov.signupSub      = document.getElementById('editSignupSub').value.trim();
+  localStorage.setItem(OVERRIDES_KEY, JSON.stringify(ov));
+  applyAllOverrides();
+  showToast('✓ Home page saved!');
+}
+
+// ── Save site name ──
+function saveSiteNameEdits() {
+  const ov = getSiteOverrides();
+  ov.siteName  = document.getElementById('editSiteName').value.trim();
+  ov.pageTitle = document.getElementById('editPageTitle').value.trim();
+  localStorage.setItem(OVERRIDES_KEY, JSON.stringify(ov));
+  applyAllOverrides();
+  showToast('✓ Site name saved!');
+}
+
+// ── Render all prompts list (built-in + custom) ──
+function renderAllPromptsList() {
+  const pov = getPromptOverrides();
+  const list = document.getElementById('allPromptsList');
+  if (!list) return;
+  list.innerHTML = prompts.map((p, i) => `
+    <div class="admin-item">
+      <div class="admin-item-content" style="cursor:pointer" onclick="openEditPrompt(${i})">
+        <div class="admin-item-cat">${p.cat} <span style="font-size:0.68rem;color:var(--mid);font-weight:400;margin-left:6px">${pov[i] ? '(edited)' : ''}</span></div>
+        <div class="admin-item-text">${p.text}</div>
+        <div class="admin-item-hint">${p.hint}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="admin-item-delete" style="color:var(--action);background:var(--action-light)" onclick="openEditPrompt(${i})" title="Edit">✏️</button>
+        ${pov[i] ? `<button class="admin-item-delete" onclick="resetPrompt(${i})" title="Reset to original">↩</button>` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Render all scenarios list ──
+function renderAllScenariosList() {
+  const sov = getScenarioOverrides();
+  const list = document.getElementById('allScenariosList');
+  if (!list) return;
+  const typeLabels = { storyteller:'🎭 Storyteller', builder:'🏠 Architect', chaos:'🔥 Chaos Gremlin', explorer:'🧭 Completionist' };
+  let html = '';
+  Object.entries(resultData).forEach(([type, data]) => {
+    data.scenarios.forEach((s, idx) => {
+      const key = type + '__' + idx;
+      html += `
+        <div class="admin-item">
+          <div class="admin-item-content" style="cursor:pointer" onclick="openEditScenario('${type}',${idx})">
+            <div class="admin-item-cat">${typeLabels[type]} ${sov[key] ? '<span style="font-size:0.68rem;color:var(--mid);font-weight:400">(edited)</span>' : ''}</div>
+            <div class="admin-item-text" style="font-weight:700">${s.title}</div>
+            <div class="admin-item-hint">${s.desc}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <button class="admin-item-delete" style="color:var(--action);background:var(--action-light)" onclick="openEditScenario('${type}',${idx})" title="Edit">✏️</button>
+            ${sov[key] ? `<button class="admin-item-delete" onclick="resetScenario('${type}',${idx})" title="Reset">↩</button>` : ''}
+          </div>
+        </div>`;
+    });
+  });
+  list.innerHTML = html;
+}
+
+// ── Edit modal ──
+let editingItem = null;
+
+function openEditPrompt(idx) {
+  editingItem = { type: 'prompt', idx };
+  const p = prompts[idx];
+  document.getElementById('editModalTitle').textContent = '✏️ Edit Prompt';
+  document.getElementById('editModalForm').innerHTML = `
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Emoji + Category</label>
+      <input class="form-input" id="editField_cat" value="${p.cat}">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Prompt Text</label>
+      <textarea class="form-textarea" id="editField_text" style="min-height:80px">${p.text}</textarea>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Hint / How to Play</label>
+      <textarea class="form-textarea" id="editField_hint" style="min-height:100px">${p.hint}</textarea>
+    </div>
+  `;
+  document.getElementById('editItemModal').classList.add('open');
+}
+
+function openEditScenario(type, idx) {
+  editingItem = { type: 'scenario', stype: type, idx };
+  const s = resultData[type].scenarios[idx];
+  const typeLabels = { storyteller:'🎭 Storyteller', builder:'🏠 Architect', chaos:'🔥 Chaos Gremlin', explorer:'🧭 Completionist' };
+  document.getElementById('editModalTitle').textContent = `✏️ Edit ${typeLabels[type]} Scenario`;
+  document.getElementById('editModalForm').innerHTML = `
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Title</label>
+      <input class="form-input" id="editField_title" value="${s.title}">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="editField_desc" style="min-height:100px">${s.desc}</textarea>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Tag Label</label>
+      <input class="form-input" id="editField_tag" value="${s.tag}">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Tag Colour</label>
+      <select class="form-select" id="editField_tagClass">
+        <option value="tag-teal" ${s.tagClass==='tag-teal'?'selected':''}>🔵 Blue</option>
+        <option value="tag-pink" ${s.tagClass==='tag-pink'?'selected':''}>🩷 Pink</option>
+        <option value="tag-purple" ${s.tagClass==='tag-purple'?'selected':''}>💜 Purple</option>
+        <option value="tag-green" ${s.tagClass==='tag-green'?'selected':''}>🟢 Green</option>
+        <option value="tag-orange" ${s.tagClass==='tag-orange'?'selected':''}>🟠 Orange</option>
+        <option value="tag-yellow" ${s.tagClass==='tag-yellow'?'selected':''}>⚪ Off-white</option>
+      </select>
+    </div>
+  `;
+  document.getElementById('editItemModal').classList.add('open');
+}
+
+function saveEditedItem() {
+  if (!editingItem) return;
+  if (editingItem.type === 'prompt') {
+    const idx = editingItem.idx;
+    const updated = {
+      cat:  document.getElementById('editField_cat').value.trim(),
+      text: document.getElementById('editField_text').value.trim(),
+      hint: document.getElementById('editField_hint').value.trim()
+    };
+    // save override
+    const pov = getPromptOverrides();
+    pov[idx] = updated;
+    localStorage.setItem(PROMPT_OV_KEY, JSON.stringify(pov));
+    // apply to live array
+    Object.assign(prompts[idx], updated);
+    renderAllPromptsList();
+    showToast('✓ Prompt updated!');
+  } else if (editingItem.type === 'scenario') {
+    const { stype, idx } = editingItem;
+    const updated = {
+      title:    document.getElementById('editField_title').value.trim(),
+      desc:     document.getElementById('editField_desc').value.trim(),
+      tag:      document.getElementById('editField_tag').value.trim(),
+      tagClass: document.getElementById('editField_tagClass').value
+    };
+    const sov = getScenarioOverrides();
+    sov[stype + '__' + idx] = updated;
+    localStorage.setItem(SCENARIO_OV_KEY, JSON.stringify(sov));
+    Object.assign(resultData[stype].scenarios[idx], updated);
+    renderAllScenariosList();
+    showToast('✓ Scenario updated!');
+  }
+  document.getElementById('editItemModal').classList.remove('open');
+}
+
+function resetPrompt(idx) {
+  if (!confirm('Reset this prompt to its original text?')) return;
+  const pov = getPromptOverrides();
+  delete pov[idx];
+  localStorage.setItem(PROMPT_OV_KEY, JSON.stringify(pov));
+  location.reload(); // easiest way to restore original
+}
+
+function resetScenario(type, idx) {
+  if (!confirm('Reset this scenario to its original text?')) return;
+  const sov = getScenarioOverrides();
+  delete sov[type + '__' + idx];
+  localStorage.setItem(SCENARIO_OV_KEY, JSON.stringify(sov));
+  location.reload();
+}
+
+function closeEditModal(e) {
+  if (e.target === document.getElementById('editItemModal')) {
+    document.getElementById('editItemModal').classList.remove('open');
+  }
+}
+
 // ══════════════════════════════════════
 // SUPABASE EMAIL SIGNUP
 // ══════════════════════════════════════
@@ -2179,6 +2598,44 @@ async function handleSignup() {
   btn.textContent = 'Join ✦';
   btn.disabled = false;
 }
+
+
+// Footer email signup (reuses same Supabase table)
+async function handleFooterSignup() {
+  const email = document.getElementById('footerEmail').value.trim();
+  const msg   = document.getElementById('footerSignupMsg');
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Please enter a valid email.';
+    msg.className = 'footer-signup-msg error'; return;
+  }
+  const btn = document.querySelector('.footer-signup-btn');
+  btn.textContent = '...'; btn.disabled = true;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/email_signups`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ email })
+    });
+    if (res.status === 201) {
+      msg.textContent = '🌱 You\'re in!';
+      msg.className = 'footer-signup-msg success';
+      document.getElementById('footerEmail').value = '';
+      trackEvent('email_signup');
+    } else if (res.status === 409) {
+      msg.textContent = 'Already signed up!';
+      msg.className = 'footer-signup-msg success';
+    } else { throw new Error(); }
+  } catch { msg.textContent = 'Something went wrong.'; msg.className = 'footer-signup-msg error'; }
+  btn.textContent = 'Join'; btn.disabled = false;
+}
+document.getElementById('footerEmail')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleFooterSignup();
+});
 
 document.getElementById('signupEmail')?.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleSignup();
@@ -2311,17 +2768,17 @@ async function handleAuth() {
 }
 
 function updateAuthUI() {
-  const btn = document.getElementById('signInBtn');
-  const wrap = document.getElementById('journalAuthBtn');
+  const wrap = document.getElementById('navAuthBtn');
+  if (!wrap) return;
   if (currentUser) {
     const initials = currentUser.email.substring(0,2).toUpperCase();
     wrap.innerHTML = `
-      <div class="user-badge" onclick="showUserMenu()">
-        <div class="user-avatar">${initials}</div>
-        <span style="font-size:0.75rem;color:var(--mid)">☁️ Synced</span>
+      <div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="showUserMenu()">
+        <div class="user-avatar" style="width:28px;height:28px;font-size:0.72rem">${initials}</div>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.7)">☁️</span>
       </div>`;
   } else {
-    wrap.innerHTML = '<button class="btn btn-outline" style="padding:8px 14px;font-size:0.78rem" onclick="openAuth()" id="signInBtn">🔒 Sign In</button>';
+    wrap.innerHTML = '<span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);white-space:nowrap">🔒 Sign In</span>';
   }
 }
 
@@ -2383,6 +2840,20 @@ function skipImport() {
 
 </script>
 
+
+<!-- ════════ SITE FOOTER ════════ -->
+<footer class="site-footer" id="siteFooter">
+  <div class="footer-signup" id="footerSignupRow">
+    <span class="footer-signup-label" id="footerSignupLabel">🌱 Get new scenarios delivered:</span>
+    <input class="footer-signup-input" id="footerEmail" type="email" placeholder="your@email.com">
+    <button class="footer-signup-btn" onclick="handleFooterSignup()">Join</button>
+  </div>
+  <div class="footer-signup-msg" id="footerSignupMsg"></div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 The Simmer's Playbook</span>
+    <span class="footer-admin-link" onclick="showScreen('admin')">⚙ Admin</span>
+  </div>
+</footer>
 
 <!-- ════════ AUTH MODAL ════════ -->
 <div class="auth-modal-overlay" id="authModal" onclick="closeAuthOnOverlay(event)">
@@ -2457,6 +2928,7 @@ function skipImport() {
     <div class="admin-tabs">
       <div class="atab active" onclick="switchAdminTab('prompts', this)">🎲 Prompts</div>
       <div class="atab" onclick="switchAdminTab('scenarios', this)">🗺️ Scenarios</div>
+      <div class="atab" onclick="switchAdminTab('siteEditor', this)">✏️ Site</div>
       <div class="atab" onclick="switchAdminTab('export', this)">📤 Export</div>
       <div class="atab" onclick="switchAdminTab('stats', this)">📊 Stats</div>
     </div>
@@ -2467,38 +2939,66 @@ function skipImport() {
         <div class="admin-section-title">✦ Add a New Prompt</div>
         <div class="admin-form-row">
           <div class="form-group" style="margin:0">
-            <label class="form-label">Emoji + Category Name</label>
-            <input class="form-input" id="newPromptCat" placeholder="e.g. 🌊 Island Life" maxlength="40">
+            <label class="form-label">Emoji</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="form-select" id="newPromptEmoji" onchange="syncEmoji('new')" style="width:auto;flex-shrink:0">
+  <option value="">— pick —</option>
+  <option value="🌧️">🌧️ Rain / Setback</option>
+  <option value="👻">👻 Mystery</option>
+  <option value="💔">💔 Heartbreak</option>
+  <option value="🎪">🎪 Drama</option>
+  <option value="🐾">🐾 Pets</option>
+  <option value="🏚️">🏚️ Home</option>
+  <option value="🌱">🌱 New Start</option>
+  <option value="🎭">🎭 Story</option>
+  <option value="💰">💰 Money</option>
+  <option value="🌙">🌙 Night</option>
+  <option value="🌊">🌊 Island</option>
+  <option value="🔮">🔮 Magic</option>
+  <option value="🌹">🌹 Romance</option>
+  <option value="⚡">⚡ Speed</option>
+  <option value="🏠">🏠 Build</option>
+  <option value="🎯">🎯 Goals</option>
+  <option value="🧪">🧪 Science</option>
+  <option value="👑">👑 Fame</option>
+  <option value="🌿">🌿 Nature</option>
+  <option value="🎵">🎵 Music</option>
+  <option value="🍕">🍕 Food</option>
+  <option value="✈️">✈️ Travel</option>
+  <option value="🔥">🔥 Chaos</option>
+  <option value="💎">💎 Wealth</option>
+  <option value="🧭">🧭 Explore</option>
+  <option value="📖">📖 Journal</option>
+  <option value="🤝">🤝 Friendship</option>
+  <option value="👶">👶 Family</option>
+  <option value="🎓">🎓 Education</option>
+  <option value="💼">💼 Career</option>
+</select>
+              <input class="form-input" id="newPromptEmojiCustom" placeholder="or type" maxlength="4" style="width:70px;text-align:center;font-size:1.2rem" oninput="syncEmojiCustom('new')">
+            </div>
           </div>
           <div class="form-group" style="margin:0">
-            <label class="form-label">Tag Colour</label>
-            <select class="form-select" id="newPromptColor">
-              <option value="">— pick a colour —</option>
-              <option value="action">🟢 Green</option>
-              <option value="blue">🔵 Blue</option>
-              <option value="pink">🩷 Pink</option>
-              <option value="purple">💜 Purple</option>
-              <option value="orange">🟠 Orange</option>
-            </select>
+            <label class="form-label">Category Name</label>
+            <input class="form-input" id="newPromptCatName" placeholder="e.g. Island Life" maxlength="30">
           </div>
         </div>
         <div class="admin-form-row single">
           <div class="form-group" style="margin:0">
             <label class="form-label">The Prompt</label>
-            <input class="form-input" id="newPromptText" placeholder='"Your Sim just..."  (include the speech marks)' maxlength="220">
+            <textarea class="form-textarea" id="newPromptText" placeholder='"Your Sim just..."' style="min-height:70px" maxlength="220"></textarea>
           </div>
         </div>
         <div class="admin-form-row single">
           <div class="form-group" style="margin:0">
-            <label class="form-label">Playing Tip (shown underneath)</label>
-            <input class="form-input" id="newPromptHint" placeholder="A tip for how to play this prompt..." maxlength="160">
+            <label class="form-label">Playing Tip — How to get started & play it out</label>
+            <textarea class="form-textarea" id="newPromptHint" placeholder="Step 1: Start a new save or use an existing Sim. Step 2: ..." style="min-height:100px" maxlength="400"></textarea>
           </div>
         </div>
         <button class="btn btn-primary" onclick="addPrompt()" style="margin-top:6px">＋ Add Prompt</button>
       </div>
 
       <div class="admin-section">
-        <div class="admin-section-title">✦ All Prompts</div>
+        <div class="admin-section-title">✦ All Prompts — Click ✏️ to Edit</div>
         <div class="admin-count" id="promptCount">0 prompts</div>
         <div class="admin-list" id="promptList"></div>
       </div>
@@ -2520,8 +3020,60 @@ function skipImport() {
             </select>
           </div>
           <div class="form-group" style="margin:0">
-            <label class="form-label">Tag Label + Emoji</label>
-            <input class="form-input" id="newScenTag" placeholder="e.g. 🌹 Emotional" maxlength="40">
+            <label class="form-label">Tag Colour</label>
+            <select class="form-select" id="newScenColor">
+              <option value="tag-teal">🔵 Blue</option>
+              <option value="tag-pink">🩷 Pink</option>
+              <option value="tag-purple">💜 Purple</option>
+              <option value="tag-green">🟢 Green</option>
+              <option value="tag-orange">🟠 Orange</option>
+              <option value="tag-yellow">⚪ Off-white</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Tag Emoji</label>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select class="form-select" id="newScenEmoji" onchange="syncEmoji('scen')" style="width:auto;flex-shrink:0">
+  <option value="">— pick —</option>
+  <option value="🌧️">🌧️ Rain / Setback</option>
+  <option value="👻">👻 Mystery</option>
+  <option value="💔">💔 Heartbreak</option>
+  <option value="🎪">🎪 Drama</option>
+  <option value="🐾">🐾 Pets</option>
+  <option value="🏚️">🏚️ Home</option>
+  <option value="🌱">🌱 New Start</option>
+  <option value="🎭">🎭 Story</option>
+  <option value="💰">💰 Money</option>
+  <option value="🌙">🌙 Night</option>
+  <option value="🌊">🌊 Island</option>
+  <option value="🔮">🔮 Magic</option>
+  <option value="🌹">🌹 Romance</option>
+  <option value="⚡">⚡ Speed</option>
+  <option value="🏠">🏠 Build</option>
+  <option value="🎯">🎯 Goals</option>
+  <option value="🧪">🧪 Science</option>
+  <option value="👑">👑 Fame</option>
+  <option value="🌿">🌿 Nature</option>
+  <option value="🎵">🎵 Music</option>
+  <option value="🍕">🍕 Food</option>
+  <option value="✈️">✈️ Travel</option>
+  <option value="🔥">🔥 Chaos</option>
+  <option value="💎">💎 Wealth</option>
+  <option value="🧭">🧭 Explore</option>
+  <option value="📖">📖 Journal</option>
+  <option value="🤝">🤝 Friendship</option>
+  <option value="👶">👶 Family</option>
+  <option value="🎓">🎓 Education</option>
+  <option value="💼">💼 Career</option>
+</select>
+              <input class="form-input" id="newScenEmojiCustom" placeholder="or type" maxlength="4" style="width:70px;text-align:center;font-size:1.2rem" oninput="syncEmojiCustom('scen')">
+            </div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Tag Label</label>
+            <input class="form-input" id="newScenTagName" placeholder="e.g. Emotional" maxlength="30">
           </div>
         </div>
         <div class="admin-form-row single">
@@ -2536,26 +3088,98 @@ function skipImport() {
             <textarea class="form-textarea" id="newScenDesc" placeholder="Describe the scenario the player will follow..." style="min-height:90px"></textarea>
           </div>
         </div>
-        <div class="admin-form-row">
-          <div class="form-group" style="margin:0">
-            <label class="form-label">Tag Colour</label>
-            <select class="form-select" id="newScenColor">
-              <option value="tag-teal">🔵 Blue</option>
-              <option value="tag-pink">🩷 Pink</option>
-              <option value="tag-purple">💜 Purple</option>
-              <option value="tag-green">🟢 Green</option>
-              <option value="tag-orange">🟠 Orange</option>
-              <option value="tag-yellow">⚪ Off-white</option>
-            </select>
-          </div>
-        </div>
         <button class="btn btn-primary" onclick="addScenario()" style="margin-top:6px">＋ Add Scenario</button>
       </div>
 
       <div class="admin-section">
-        <div class="admin-section-title">✦ All Custom Scenarios</div>
-        <div class="admin-count" id="scenarioCount">0 custom scenarios</div>
+        <div class="admin-section-title">✦ All Scenarios — Click ✏️ to Edit</div>
+        <div class="admin-count" id="scenarioCount">0 scenarios</div>
         <div class="admin-list" id="scenarioList"></div>
+      </div>
+    </div>
+
+
+    <!-- ── SITE EDITOR PANEL ── -->
+    <div class="admin-panel" id="adminSiteEditor">
+
+      <!-- Home page text -->
+      <div class="admin-section">
+        <div class="admin-section-title">✦ Home Page Text</div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Hero Tag (small text above title)</label>
+            <input class="form-input" id="editHeroTag" placeholder="✦ For Simmers who need a nudge">
+          </div>
+        </div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Hero Title</label>
+            <input class="form-input" id="editHeroTitle" placeholder="Find your next great Sims story.">
+          </div>
+        </div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Hero Description</label>
+            <textarea class="form-textarea" id="editHeroSub" style="min-height:80px"></textarea>
+          </div>
+        </div>
+        <div class="admin-form-row">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Primary Button Text</label>
+            <input class="form-input" id="editBtn1" placeholder="✦ Find My Playstyle">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Secondary Button Text</label>
+            <input class="form-input" id="editBtn2" placeholder="🎲 Random Prompt">
+          </div>
+        </div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Community Signup Headline</label>
+            <input class="form-input" id="editSignupHeadline" placeholder="Get new scenarios delivered to you.">
+          </div>
+        </div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Community Signup Description</label>
+            <input class="form-input" id="editSignupSub" placeholder="Join other Simmers and be the first to know...">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveHomeEdits()" style="margin-top:6px">💾 Save Home Page</button>
+      </div>
+
+      <!-- Site name & nav -->
+      <div class="admin-section">
+        <div class="admin-section-title">✦ Site Name & Nav</div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Site Name (top left)</label>
+            <input class="form-input" id="editSiteName" placeholder="The Simmer's Playbook">
+          </div>
+        </div>
+        <div class="admin-form-row single">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Page Title (browser tab)</label>
+            <input class="form-input" id="editPageTitle" placeholder="The Simmer's Playbook">
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveSiteNameEdits()" style="margin-top:6px">💾 Save Site Name</button>
+      </div>
+
+
+
+    </div>
+
+    <!-- Inline edit modal -->
+    <div class="auth-modal-overlay" id="editItemModal" onclick="closeEditModal(event)">
+      <div class="auth-modal" style="max-width:500px">
+        <button class="auth-close" onclick="document.getElementById('editItemModal').classList.remove('open')">×</button>
+        <div class="auth-modal-title" id="editModalTitle">Edit Prompt</div>
+        <div class="auth-form" id="editModalForm"></div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn btn-outline" onclick="document.getElementById('editItemModal').classList.remove('open')" style="flex:1;justify-content:center">Cancel</button>
+          <button class="btn btn-primary" onclick="saveEditedItem()" style="flex:1;justify-content:center">💾 Save</button>
+        </div>
       </div>
     </div>
 
