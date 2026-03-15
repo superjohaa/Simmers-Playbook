@@ -1,50 +1,39 @@
 // The Simmer's Playbook — Service Worker
-// Caches the app so it works offline once installed
+// Network first: always tries to fetch fresh, falls back to cache if offline
 
-const CACHE_NAME = 'simmers-playbook-v1';
+const CACHE_NAME = 'simmers-playbook-v3';
 
-// Everything we want available offline
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Lora:ital,wght@0,500;0,600;1,500;1,600&display=swap'
-];
-
-// Install: cache everything
+// On install, skip waiting and take over immediately
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
-  );
   self.skipWaiting();
 });
 
-// Activate: clean up old caches
+// On activate, delete ALL old caches and claim clients immediately
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-      )
-    )
+      Promise.all(keys.map(key => caches.delete(key)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
+// Fetch: network first, cache as fallback for offline
 self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).catch(() => {
-        // If offline and not cached, return the main app page
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
+    fetch(event.request)
+      .then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         }
-      });
-    })
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request).then(cached => {
+          return cached || caches.match('/index.html');
+        });
+      })
   );
 });
