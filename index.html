@@ -2123,6 +2123,8 @@ async function saveEntry() {
 // Render on journal screen open
 const origShowScreen = showScreen;
 window.showScreen = function(id) {
+  // redirect home to dashboard when logged in
+  if (id === 'home' && currentUser) id = 'dashboard';
   origShowScreen(id);
   if (id === 'journal') renderEntries(activeFilter);
   if (id === 'prompt' && lastPromptIdx === -1) randomPrompt();
@@ -2933,13 +2935,7 @@ function renderDashboard() {
 }
 
 // Show dashboard instead of home when logged in
-const _origShowScreen = window.showScreen;
-window.showScreen = function(id) {
-  // if navigating to home and user is logged in, show dashboard instead
-  if (id === 'home' && currentUser) id = 'dashboard';
-  _origShowScreen(id);
-  if (id === 'dashboard') renderDashboard();
-};
+// dashboard redirect handled inside the main showScreen wrapper below
 
 // ── Scenario guide popup ──
 function openScenarioGuide(idx, encodedScenario) {
