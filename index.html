@@ -3074,6 +3074,188 @@ function openSavedScenario(idx) {
 }
 
 
+
+// ══════════════════════════════════════
+// SIMMER TYPE BREAKDOWN
+// ══════════════════════════════════════
+const simmerTypeBreakdowns = {
+  storyteller: {
+    emoji: '🎭',
+    name: 'The Storyteller',
+    tagline: 'You don\'t play The Sims. You write it.',
+    colour: 'var(--bg-darkest)',
+    overview: 'The Sims is your canvas and your Sims are characters you genuinely care about. You remember their backstories, feel their losses, and celebrate their wins like they\'re real. You\'re not optimising — you\'re narrating.',
+    strengths: [
+      { icon: '💬', title: 'Emotional depth', desc: 'You build relationships with nuance. Your Sims have history, motivation, and complicated feelings for each other.' },
+      { icon: '📖', title: 'Long-form play', desc: 'You can play the same save for months because every session adds a new chapter. You never run out of story.' },
+      { icon: '🎯', title: 'Organic decision making', desc: 'You let the game surprise you. When something unexpected happens, you lean in instead of reloading.' },
+    ],
+    blind_spots: [
+      { icon: '⏳', title: 'Getting stuck in one save', desc: 'You can get so attached to a family that trying anything new feels like a betrayal.' },
+      { icon: '🔁', title: 'The reload trap', desc: 'Sometimes you know you shouldn\'t reload but you do anyway because the story matters too much.' },
+    ],
+    play_tips: [
+      'Keep a journal of your saves — even just one line per session. It makes the story feel real and helps you remember details.',
+      'Try the "no reload" rule for one session. The disasters often write better stories than the clean runs.',
+      'Give each of your Sims one secret they\'re keeping from everyone else. Let it come out naturally.',
+      'When a Sim ages up or dies, take a screenshot and write a one-sentence eulogy. It\'s surprisingly moving.',
+    ],
+    best_prompts: ['💔 Old Flame', '🧩 The Puzzle Box', '🎭 Hidden Identity', '📬 The Pen Pal'],
+    famous_quote: '"I had to pause the game because I needed a moment after what just happened."'
+  },
+  builder: {
+    emoji: '🏠',
+    name: 'The Architect',
+    tagline: 'Every tile is a decision. Every room tells a story.',
+    colour: 'var(--action-dark)',
+    overview: 'You see The Sims as a design tool as much as a life simulator. The lot is your medium. You spend hours on a floor plan before a single Sim moves in — and that\'s not a problem, that\'s the whole point.',
+    strengths: [
+      { icon: '🎨', title: 'Visual thinking', desc: 'You can hold an entire build in your head and execute it with precision. Your spaces feel intentional.' },
+      { icon: '🔲', title: 'Problem solving', desc: 'Constraints don\'t frustrate you — they inspire you. A tight budget or awkward lot shape makes the build more interesting.' },
+      { icon: '✨', title: 'Attention to detail', desc: 'You notice things other players miss: the light source, the wall height, the one object that makes the whole room work.' },
+    ],
+    blind_spots: [
+      { icon: '👤', title: 'Forgetting the Sims', desc: 'Sometimes you finish a build and realise you have no idea who actually lives there.' },
+      { icon: '♾️', title: 'The never-finished build', desc: 'There\'s always one more thing to adjust. Knowing when to stop is genuinely hard.' },
+    ],
+    play_tips: [
+      'Try giving your build to a Sim with a strong personality before you start. Let their traits dictate design choices.',
+      'Set a budget limit even on free builds. Constraints push creativity in directions you wouldn\'t choose freely.',
+      'Build one room with no function — a space that just exists for atmosphere. Then see if your Sims gravitate to it.',
+      'Play in the build for a full Sim week before changing anything. See what the space reveals about itself.',
+    ],
+    best_prompts: ['🏚️ The Fixer-Upper Life', '🏚️ The Inheritance', '🌱 Starting Over', '🌾 The Off-Grid Experiment'],
+    famous_quote: '"I\'ve been on this one bathroom for two hours and it\'s not right yet."'
+  },
+  chaos: {
+    emoji: '🔥',
+    name: 'The Chaos Gremlin',
+    tagline: 'You didn\'t start the fire. Actually, yes you did.',
+    colour: '#c45000',
+    overview: 'You play The Sims to see what happens when you stop controlling it. You find joy in disasters, delight in drama, and somehow your most broken saves are your most beloved ones. You\'re not here for the happy ending — you\'re here for the story that nobody planned.',
+    strengths: [
+      { icon: '😂', title: 'Nothing is precious', desc: 'You can let go of outcomes, which means you experience the full range of what the game can do.' },
+      { icon: '🦋', title: 'Embracing the unexpected', desc: 'When something goes sideways, you don\'t panic — you document it. The unplanned moments are your best content.' },
+      { icon: '🎪', title: 'Pure entertainment', desc: 'You make other people want to play The Sims. Your sessions are genuinely unpredictable and genuinely fun.' },
+    ],
+    blind_spots: [
+      { icon: '📉', title: 'Losing the thread', desc: 'Sometimes the chaos gets so chaotic that there\'s no story left — just noise. Finding the line is a skill.' },
+      { icon: '🔥', title: 'Burning it all down', desc: 'When a save gets complicated, your instinct is to nuke it and start fresh. Sometimes the mess was the good part.' },
+    ],
+    play_tips: [
+      'Add one rule to your chaos sessions — a single constraint that channels the disorder into a story.',
+      'Keep a chaos diary. The disasters you document become legendary. The ones you let pass are forgotten.',
+      'Try a "chaos with a heart" save — one Sim you genuinely care about, surrounded by the usual mayhem.',
+      'Give your chaos Sim one trait that\'s genuinely kind. Watch the conflict between who they are and what they do.',
+    ],
+    best_prompts: ['🌊 The Rock Bottom', '🧲 The Magnetic Stranger', '🎪 Wrong Kind of Famous', '🌧️ Life Shake-Up'],
+    famous_quote: '"I don\'t know how they all ended up in the pool but I\'m not fixing it."'
+  },
+  explorer: {
+    emoji: '🧭',
+    name: 'The Completionist',
+    tagline: 'The game isn\'t done until everything is done.',
+    colour: 'var(--purple)',
+    overview: 'You want to see every corner of The Sims 4. Every career, every skill, every occult type, every world. You play with purpose and direction, and there\'s a deep satisfaction in ticking things off a list that nobody else even knew existed.',
+    strengths: [
+      { icon: '🗺️', title: 'Strategic thinking', desc: 'You plan sessions in advance. You know which skills unlock which career branches. You have a spreadsheet.' },
+      { icon: '🏆', title: 'Thorough knowledge', desc: 'You probably know more about this game than most people. You\'ve seen things casual players never find.' },
+      { icon: '⚡', title: 'Efficient play', desc: 'You don\'t waste time. Every session has a goal and you make meaningful progress toward it.' },
+    ],
+    blind_spots: [
+      { icon: '😐', title: 'The grind feeling', desc: 'Sometimes ticking boxes stops feeling like play and starts feeling like work. Knowing when to take a detour matters.' },
+      { icon: '🎯', title: 'Missing the side quests', desc: 'You can be so focused on the goal that you skip the unexpected moments that make The Sims special.' },
+    ],
+    play_tips: [
+      'Once a session, do one thing that isn\'t on your list. Just one. See what happens.',
+      'Build a legacy goal that spans multiple playthroughs — something big enough to stay interesting for months.',
+      'Try combining completion challenges: max a skill through a specific career, in a specific world, as a specific occult type.',
+      'Document your completionist runs. A full career playthrough log is genuinely fascinating to look back on.',
+    ],
+    best_prompts: ['💰 Rags to Riches', '🌙 Night Owl Run', '🎓 The Late Bloomer', '🏋️ The Comeback Kid'],
+    famous_quote: '"I just need to max one more skill and then I can start the next aspiration."'
+  }
+};
+
+function openSimmerTypeModal() {
+  const saved = localStorage.getItem('sp_quiz_result');
+  const content = document.getElementById('simmerTypeContent');
+  if (!content) return;
+
+  if (!saved) {
+    content.innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:3rem;margin-bottom:12px">🎭</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--ink);margin-bottom:8px">No quiz result yet</div>
+        <div style="font-size:0.88rem;color:var(--mid);margin-bottom:20px">Take the playstyle quiz to discover your Simmer type!</div>
+        <button class="btn btn-primary" onclick="showScreen('quiz');document.getElementById('simmerTypeModal').classList.remove('open')" style="justify-content:center">Take the Quiz ✦</button>
+      </div>`;
+    document.getElementById('simmerTypeModal').classList.add('open');
+    return;
+  }
+
+  try {
+    const r = JSON.parse(saved);
+    const b = simmerTypeBreakdowns[r.type];
+    if (!b) return;
+
+    content.innerHTML = `
+      <div style="background:${b.colour};border-radius:16px;padding:24px;margin-bottom:20px;text-align:center">
+        <div style="font-size:3rem;margin-bottom:8px">${b.emoji}</div>
+        <div style="font-size:1.5rem;font-weight:900;color:white;margin-bottom:4px">${b.name}</div>
+        <div style="font-size:0.88rem;color:rgba(255,255,255,0.8);font-style:italic">${b.tagline}</div>
+      </div>
+
+      <div style="font-size:0.88rem;color:var(--mid);line-height:1.7;margin-bottom:20px;padding:0 4px">${b.overview}</div>
+
+      <div style="font-size:0.72rem;font-weight:800;color:var(--action);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">✦ Your Strengths</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        ${b.strengths.map(s => `
+          <div style="background:var(--action-light);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+            <span style="font-size:1.1rem;flex-shrink:0">${s.icon}</span>
+            <div><div style="font-size:0.85rem;font-weight:800;color:var(--action-dark);margin-bottom:2px">${s.title}</div>
+            <div style="font-size:0.8rem;color:var(--action-dark);line-height:1.5">${s.desc}</div></div>
+          </div>`).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">✦ Watch Out For</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        ${b.blind_spots.map(s => `
+          <div style="background:var(--bg-pale);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+            <span style="font-size:1.1rem;flex-shrink:0">${s.icon}</span>
+            <div><div style="font-size:0.85rem;font-weight:800;color:var(--ink);margin-bottom:2px">${s.title}</div>
+            <div style="font-size:0.8rem;color:var(--mid);line-height:1.5">${s.desc}</div></div>
+          </div>`).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;color:var(--action);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">✦ Tips For Your Playstyle</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+        ${b.play_tips.map((t,i) => `
+          <div style="display:flex;gap:10px;align-items:flex-start">
+            <div style="background:var(--action);color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:900;flex-shrink:0;margin-top:2px">${i+1}</div>
+            <div style="font-size:0.83rem;color:var(--ink);line-height:1.6">${t}</div>
+          </div>`).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;color:var(--action);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">✦ Prompts Made For You</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+        ${b.best_prompts.map(p => `<span style="background:var(--action-light);color:var(--action-dark);font-size:0.78rem;font-weight:800;padding:5px 12px;border-radius:100px">${p}</span>`).join('')}
+      </div>
+
+      <div style="background:var(--ink);border-radius:14px;padding:16px 20px;text-align:center;margin-bottom:8px">
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:6px;font-style:italic">Every ${b.name} has said this at least once</div>
+        <div style="font-size:0.92rem;color:var(--accent);font-style:italic;font-family:'Lora',serif;line-height:1.5">${b.famous_quote}</div>
+      </div>
+
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn btn-outline" onclick="showScreen('quiz');document.getElementById('simmerTypeModal').classList.remove('open')" style="font-size:0.82rem">↩ Retake Quiz</button>
+      </div>
+    `;
+  } catch(e) { console.error(e); }
+
+  document.getElementById('simmerTypeModal').classList.add('open');
+}
+
 // ══════════════════════════════════════
 // ACCOUNT SETTINGS
 // ══════════════════════════════════════
@@ -3548,15 +3730,26 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
     <div class="account-dropdown-name" id="dropdownName">Simmer</div>
     <div class="account-dropdown-email" id="dropdownEmail"></div>
   </div>
-  <div class="account-dropdown-item" onclick="openAccountSettings(); closeDropdown()">
-    <span class="account-dropdown-icon">⚙️</span> Account Settings
+  <div class="account-dropdown-item" onclick="openSimmerTypeModal(); closeDropdown()">
+    <span class="account-dropdown-icon">🎭</span> My Simmer Type
   </div>
   <div class="account-dropdown-item" onclick="showScreen('journal'); closeDropdown()">
     <span class="account-dropdown-icon">📖</span> My Journal
   </div>
+  <div class="account-dropdown-item" onclick="openAccountSettings(); closeDropdown()">
+    <span class="account-dropdown-icon">⚙️</span> Account Settings
+  </div>
   <div class="account-dropdown-divider"></div>
   <div class="account-dropdown-item danger" onclick="signOut(); closeDropdown()">
     <span class="account-dropdown-icon">🚪</span> Sign Out
+  </div>
+</div>
+
+<!-- ════════ SIMMER TYPE BREAKDOWN MODAL ════════ -->
+<div class="auth-modal-overlay" id="simmerTypeModal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="auth-modal" style="max-width:540px;max-height:85vh;overflow-y:auto">
+    <button class="auth-close" onclick="document.getElementById('simmerTypeModal').classList.remove('open')">×</button>
+    <div id="simmerTypeContent"></div>
   </div>
 </div>
 
