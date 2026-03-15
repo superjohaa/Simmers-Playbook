@@ -317,6 +317,15 @@
 
   .question-step { display: none; }
   .question-step.active { display: block; animation: fadeUp 0.35s ease; }
+  .quiz-back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; font-weight: 800; color: var(--mid);
+    background: none; border: none; cursor: pointer;
+    padding: 6px 0; margin-bottom: 16px;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .quiz-back-btn.visible { opacity: 1; pointer-events: all; }
+  .quiz-back-btn:hover { color: var(--action-dark); }
 
   .q-chip {
     display: inline-block;
@@ -736,6 +745,51 @@
     cursor: pointer; transition: color 0.2s; text-decoration: none;
   }
   .footer-admin-link:hover { color: rgba(255,255,255,0.5); }
+
+
+  /* ══════════════════════════════════
+     ACCOUNT DROPDOWN
+  ══════════════════════════════════ */
+  .account-dropdown {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    background: var(--white); border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+    border: 1.5px solid var(--bg-mid);
+    min-width: 220px; z-index: 9999;
+    opacity: 0; transform: translateY(-8px) scale(0.97);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s cubic-bezier(0.22,1,0.36,1);
+    overflow: hidden;
+  }
+  .account-dropdown.open {
+    opacity: 1; transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+  .account-dropdown-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--bg-pale);
+  }
+  .account-dropdown-name {
+    font-size: 0.92rem; font-weight: 800; color: var(--ink);
+  }
+  .account-dropdown-email {
+    font-size: 0.72rem; color: var(--mid); margin-top: 2px;
+  }
+  .account-dropdown-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 16px; font-size: 0.85rem; font-weight: 700;
+    color: var(--ink); cursor: pointer;
+    transition: background 0.15s;
+    text-decoration: none;
+  }
+  .account-dropdown-item:hover { background: var(--bg-pale); }
+  .account-dropdown-item.danger { color: #e05a5a; }
+  .account-dropdown-item.danger:hover { background: #fff0f0; }
+  .account-dropdown-divider {
+    height: 1px; background: var(--bg-pale); margin: 4px 0;
+  }
+  .account-dropdown-icon { font-size: 1rem; width: 20px; text-align: center; }
+  #navAuthWrap { position: relative; }
 
   /* ══════════════════════════════════
      AUTH MODAL
@@ -1301,10 +1355,10 @@
     <a onclick="showScreen('quiz')"   id="nav-quiz">Quiz</a>
     <a onclick="showScreen('prompt')" id="nav-prompt">Prompts</a>
     <a onclick="showScreen('journal')"id="nav-journal">Journal</a>
-    <div id="navAuthBtn" onclick="openAuth()" style="display:flex;align-items:center;cursor:pointer;margin-left:4px">
+    <div id="navAuthWrap" style="position:relative;margin-left:4px"><div id="navAuthBtn" onclick="openAuth()" style="display:flex;align-items:center;cursor:pointer">
       <span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);transition:all 0.2s;white-space:nowrap">🔒 Sign In</span>
     </div>
-  </div>
+  </div></div>
 </nav>
 
 <!-- ════════ HOME ════════ -->
@@ -1428,6 +1482,7 @@
     <div id="scenarioNudge" style="display:none;background:var(--bg-pale);border:2px solid var(--bg-mid);border-radius:14px;padding:14px 18px;margin-bottom:20px;text-align:center;font-size:0.88rem;color:var(--action-dark);font-weight:700;animation:fadeUp 0.4s ease">
       🗺️ Complete the quiz to unlock your personalised scenarios!
     </div>
+    <button class="quiz-back-btn" id="quizBackBtn" onclick="prevQuestion()">← Back</button>
     <div class="progress-row">
       <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
       <div class="progress-label" id="progressLabel">1 / 5</div>
@@ -1728,10 +1783,12 @@ function showScreen(id) {
 
 // ── QUIZ LOGIC ──
 const scores = { storyteller:0, builder:0, chaos:0, explorer:0 };
+const quizHistory = []; // tracks {qNum, type} for each answer
 
 function nextQuestion(qNum, type, e) {
   if (qNum === 1) trackEvent('quiz_start');
   scores[type]++;
+  quizHistory.push({ qNum, type });
   e.currentTarget.classList.add('selected');
   setTimeout(() => {
     document.getElementById('q'+qNum).classList.remove('active');
@@ -1739,7 +1796,31 @@ function nextQuestion(qNum, type, e) {
     const pct = (qNum / 5) * 100;
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('progressLabel').textContent = (qNum+1) + ' / 5';
+    updateBackBtn(qNum+1);
   }, 300);
+}
+
+function prevQuestion() {
+  if (quizHistory.length === 0) return;
+  const last = quizHistory.pop();
+  // undo the score
+  scores[last.type] = Math.max(0, scores[last.type] - 1);
+  // go back visually
+  const currentQ = last.qNum + 1;
+  document.getElementById('q'+currentQ).classList.remove('active');
+  document.getElementById('q'+last.qNum).classList.add('active');
+  // clear selected on the question we're returning to
+  document.getElementById('q'+last.qNum).querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  // update progress
+  const pct = ((last.qNum - 1) / 5) * 100;
+  document.getElementById('progressFill').style.width = Math.max(20, pct) + '%';
+  document.getElementById('progressLabel').textContent = last.qNum + ' / 5';
+  updateBackBtn(last.qNum);
+}
+
+function updateBackBtn(qNum) {
+  const btn = document.getElementById('quizBackBtn');
+  if (btn) btn.classList.toggle('visible', qNum > 1);
 }
 
 const resultData = {
@@ -1859,6 +1940,8 @@ function goToScenarios() {
 
 function retakeQuiz() {
   Object.keys(scores).forEach(k => scores[k] = 0);
+  quizHistory.length = 0;
+  updateBackBtn(1);
   document.querySelectorAll('.question-step').forEach((q,i) => {
     q.classList.remove('active');
     q.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
@@ -3321,6 +3404,28 @@ function showUserMenu() {
   openAccountSettings();
 }
 
+// ══════════════════════════════════════
+// ACCOUNT DROPDOWN
+// ══════════════════════════════════════
+function toggleDropdown(e) {
+  e.stopPropagation();
+  const dd = document.getElementById('accountDropdown');
+  dd.classList.toggle('open');
+}
+
+function closeDropdown() {
+  const dd = document.getElementById('accountDropdown');
+  if (dd) dd.classList.remove('open');
+}
+
+// close on outside click
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('navAuthWrap');
+  const dd = document.getElementById('accountDropdown');
+  if (dd && wrap && !wrap.contains(e.target)) dd.classList.remove('open');
+});
+
+
 // ── Import local entries to cloud ──
 function checkImport(local) {
   if (!local || !local.length) return;
@@ -3388,6 +3493,27 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
     <span class="footer-admin-link" onclick="showScreen('admin')">⚙ Admin</span>
   </div>
 </footer>
+
+<!-- ════════ ACCOUNT DROPDOWN ════════ -->
+<div class="account-dropdown" id="accountDropdown">
+  <div class="account-dropdown-header">
+    <div class="account-dropdown-name" id="dropdownName">Simmer</div>
+    <div class="account-dropdown-email" id="dropdownEmail"></div>
+  </div>
+  <div class="account-dropdown-item" onclick="openAccountSettings(); closeDropdown()">
+    <span class="account-dropdown-icon">⚙️</span> Account Settings
+  </div>
+  <div class="account-dropdown-item" onclick="showScreen('dashboard'); closeDropdown()">
+    <span class="account-dropdown-icon">🏠</span> My Dashboard
+  </div>
+  <div class="account-dropdown-item" onclick="showScreen('journal'); closeDropdown()">
+    <span class="account-dropdown-icon">📖</span> My Journal
+  </div>
+  <div class="account-dropdown-divider"></div>
+  <div class="account-dropdown-item danger" onclick="signOut(); closeDropdown()">
+    <span class="account-dropdown-icon">🚪</span> Sign Out
+  </div>
+</div>
 
 <!-- ════════ ACCOUNT SETTINGS MODAL ════════ -->
 <div class="auth-modal-overlay" id="accountModal" onclick="closeAccountModal(event)">
