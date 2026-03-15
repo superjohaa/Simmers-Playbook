@@ -882,17 +882,8 @@
   ══════════════════════════════════ */
   .dashboard-wrapper { max-width: 820px; margin: 0 auto; padding: 48px 32px; }
   #dashboard {
-    background: var(--action-light);
+    background: transparent;
     position: relative;
-  }
-  #dashboard::before {
-    content: '';
-    position: absolute; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(
-      45deg,
-      transparent, transparent 30px,
-      rgba(27,124,5,0.06) 30px, rgba(27,124,5,0.06) 60px
-    );
   }
   .dashboard-wrapper { max-width: 820px; margin: 0 auto; padding: 48px 32px; position: relative; z-index: 1; }
   .dash-greeting {
