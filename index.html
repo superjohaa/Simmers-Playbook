@@ -3383,25 +3383,29 @@ async function handleAuth() {
 
 function updateAuthUI() {
   const wrap = document.getElementById('navAuthBtn');
-
   if (!wrap) return;
   if (currentUser) {
     const displayName = currentUser.username || currentUser.email.split('@')[0];
     const initials = displayName.substring(0,2).toUpperCase();
     wrap.innerHTML = `
-      <div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="showUserMenu()">
+      <div style="display:flex;align-items:center;gap:7px;cursor:pointer" onclick="toggleDropdown(event)">
         <div class="user-avatar" style="width:28px;height:28px;font-size:0.72rem">${initials}</div>
-        <span style="font-size:0.72rem;color:rgba(255,255,255,0.7)">☁️</span>
+        <span style="font-size:0.72rem;color:rgba(255,255,255,0.7)">▾</span>
       </div>`;
-
+    const dn = document.getElementById('dropdownName');
+    const de = document.getElementById('dropdownEmail');
+    if (dn) dn.textContent = displayName;
+    if (de) de.textContent = currentUser.email;
+    const wrap2 = document.getElementById('navAuthWrap');
+    const dd = document.getElementById('accountDropdown');
+    if (wrap2 && dd && !wrap2.contains(dd)) wrap2.appendChild(dd);
   } else {
     wrap.innerHTML = '<span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);white-space:nowrap">🔒 Sign In</span>';
-
   }
 }
 
 function showUserMenu() {
-  openAccountSettings();
+  toggleDropdown(new MouseEvent('click'));
 }
 
 // ══════════════════════════════════════
