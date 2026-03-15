@@ -2974,69 +2974,6 @@ function closeHtpOnOverlay(e) { if (e.target === document.getElementById('htpMod
 // ══════════════════════════════════════
 // USER DASHBOARD
 // ══════════════════════════════════════
-const DASH_MESSAGES = [
-  "Every great Sim story started with someone pressing play. What\'s yours today?",
-  "Your Sims are waiting. They\'ve been having a whole life without you.",
-  "The best save file is the one you\'re about to start.",
-  "Whatever happened last session — that was just the beginning.",
-  "Today\'s the day something unexpected happens in your game.",
-  "Your Sim has opinions about what happens next. Go find out what they are.",
-  "Some of the best Sims stories were written by accident. Open the game.",
-  "The story doesn\'t write itself. Well. Kind of it does. But you have to be there."
-];
-
-function renderDashboard() {
-  const user = currentUser;
-  if (!user) return;
-
-  // greeting
-  const hour = new Date().getHours();
-  const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-  const name = user.email.split('@')[0];
-  document.getElementById('dashGreeting').textContent = `${timeGreeting}, ${name} ✦`;
-  document.getElementById('dashMsg').textContent = DASH_MESSAGES[Math.floor(Math.random() * DASH_MESSAGES.length)];
-
-  // simmer type badge
-  const saved = localStorage.getItem('sp_quiz_result');
-  if (saved) {
-    const r = JSON.parse(saved);
-    document.getElementById('dashBadgeEmoji').textContent = r.emoji;
-    document.getElementById('dashBadgeType').textContent = r.typeName;
-
-    // scenarios row
-    const scenHtml = r.scenarios.slice(0,5).map((s,i) => `
-      <div class="dash-scenario-chip" onclick="openSavedScenario(${i})">
-        <div class="dash-scenario-chip-title">${s.title}</div>
-        <div class="dash-scenario-chip-tag">${s.tag}</div>
-      </div>`).join('');
-    document.getElementById('dashScenariosContent').innerHTML =
-      `<div class="dash-scenarios-row">${scenHtml}</div>
-       <div style="font-size:0.75rem;color:var(--mid);margin-top:10px">Tap any scenario to see the How to Play guide · <span style="color:var(--action);cursor:pointer;font-weight:700" onclick="showScreen('quiz')">Retake quiz</span> to refresh</div>`;
-    window._currentScenarios = r.scenarios;
-  }
-
-  // latest journal entry
-  const entries = loadEntries();
-  updateStreak(entries);
-  const streakEl = document.getElementById('dashStreakNum');
-  if (streakEl) streakEl.textContent = document.getElementById('streakNum')?.textContent?.replace('🔥 ','') || '0';
-
-  const statsEl = document.getElementById('dashStats');
-  if (statsEl) statsEl.innerHTML = `${entries.length} total entr${entries.length === 1 ? 'y' : 'ies'} logged`;
-
-  if (entries.length > 0) {
-    const e = entries[0];
-    const moodsHtml = e.moods && e.moods.length
-      ? `<div class="dash-journal-moods">${e.moods.map(m => `<span class="mood-chip ${moodChipClass[m]||'chip-teal'}" style="font-size:0.68rem;padding:2px 8px">${m}</span>`).join('')}</div>` : '';
-    document.getElementById('dashJournalContent').innerHTML = `
-      <div class="dash-journal-title">${escHtml(e.title)}</div>
-      <div class="dash-journal-preview">${escHtml(e.body)}</div>
-      ${moodsHtml}
-      <div class="dash-journal-date">${formatDate(e.date)}</div>
-      <button class="btn btn-outline" onclick="showScreen(\'journal\')" style="margin-top:12px;font-size:0.78rem;padding:8px 14px">View all entries →</button>`;
-  }
-}
-
 function openSavedScenario(idx) {
   const scenarios = window._currentScenarios || [];
   const s = scenarios[idx];
