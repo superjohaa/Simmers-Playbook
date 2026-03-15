@@ -2669,7 +2669,7 @@ function applyAllOverrides() {
     }
   });
 }
-applyAllOverrides();
+document.addEventListener("DOMContentLoaded", applyAllOverrides);
 
 // ── Populate site editor fields ──
 function populateSiteEditor() {
@@ -3270,16 +3270,21 @@ function skipImport() {
 }
 
 // ── Restore session on page load ──
-(function restoreSession() {
+document.addEventListener('DOMContentLoaded', function restoreSession() {
   try {
     const saved = localStorage.getItem('sp_session');
     if (saved) {
       currentUser = JSON.parse(saved);
       updateAuthUI();
-      loadCloudEntries().then(() => { renderEntries(activeFilter); if (document.getElementById('home').classList.contains('active')) showScreen('dashboard'); });
+      loadCloudEntries().then(() => {
+        renderEntries(activeFilter);
+        if (document.getElementById('home').classList.contains('active')) {
+          showScreen('dashboard');
+        }
+      });
     }
   } catch(e) { console.error('Session restore failed', e); }
-})();
+});
 
 
 </script>
