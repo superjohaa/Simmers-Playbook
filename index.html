@@ -3079,8 +3079,10 @@ function openSavedScenario(idx) {
 // ══════════════════════════════════════
 function openAccountSettings() {
   if (!currentUser) return;
-  document.getElementById('accountEmail').textContent = currentUser.email;
   document.getElementById('accountUsername').value = currentUser.username || '';
+  document.getElementById('accountEmailInput').value = currentUser.email || '';
+  document.getElementById('accountNewPassword').value = '';
+  document.getElementById('accountConfirmPassword').value = '';
   document.getElementById('accountMsg').textContent = '';
   document.getElementById('accountModal').classList.add('open');
 }
@@ -3092,36 +3094,72 @@ function closeAccountModal(e) {
 }
 
 async function saveAccountSettings() {
-  const username = document.getElementById('accountUsername').value.trim();
-  const msg = document.getElementById('accountMsg');
+  const username    = document.getElementById('accountUsername').value.trim();
+  const newEmail    = document.getElementById('accountEmailInput').value.trim();
+  const newPassword = document.getElementById('accountNewPassword').value;
+  const confirmPw   = document.getElementById('accountConfirmPassword').value;
+  const msg         = document.getElementById('accountMsg');
 
   if (!username) { msg.textContent = 'Please enter a username.'; msg.className = 'auth-msg error'; return; }
+  if (!newEmail)  { msg.textContent = 'Please enter an email address.'; msg.className = 'auth-msg error'; return; }
+  if (newPassword && newPassword !== confirmPw) {
+    msg.textContent = 'Passwords do not match.'; msg.className = 'auth-msg error'; return;
+  }
+  if (newPassword && newPassword.length < 6) {
+    msg.textContent = 'Password must be at least 6 characters.'; msg.className = 'auth-msg error'; return;
+  }
 
   const btn = document.querySelector('#accountModal .btn-primary');
   btn.textContent = '...'; btn.disabled = true;
 
   try {
+    // ── Update username in user_profiles ──
     const existing = await fetch(
       `${SUPABASE_URL}/rest/v1/user_profiles?user_id=eq.${currentUser.id}`,
       { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${currentUser.access_token}` }}
     );
     const rows = await existing.json();
-
     if (rows.length > 0) {
       await sbFetch('PATCH', `/rest/v1/user_profiles?user_id=eq.${currentUser.id}`, { username });
     } else {
       await sbFetch('POST', '/rest/v1/user_profiles', { user_id: currentUser.id, username });
     }
-
     currentUser.username = username;
+
+    // ── Update email if changed ──
+    if (newEmail !== currentUser.email) {
+      const emailRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${currentUser.access_token}` },
+        body: JSON.stringify({ email: newEmail })
+      });
+      if (!emailRes.ok) throw new Error('Email update failed');
+      currentUser.email = newEmail;
+      msg.textContent = '✓ Email update sent — check your inbox to confirm.';
+    }
+
+    // ── Update password if provided ──
+    if (newPassword) {
+      const pwRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${currentUser.access_token}` },
+        body: JSON.stringify({ password: newPassword })
+      });
+      if (!pwRes.ok) throw new Error('Password update failed');
+    }
+
     localStorage.setItem('sp_session', JSON.stringify(currentUser));
     updateAuthUI();
     renderDashboard();
-    msg.textContent = '✓ Username saved!';
+
+    if (!msg.textContent) {
+      msg.textContent = '✓ Settings saved!';
+    }
     msg.className = 'auth-msg success';
-    setTimeout(() => document.getElementById('accountModal').classList.remove('open'), 1200);
+    setTimeout(() => document.getElementById('accountModal').classList.remove('open'), 1500);
+
   } catch(e) {
-    msg.textContent = 'Something went wrong. Please try again.';
+    msg.textContent = e.message || 'Something went wrong. Please try again.';
     msg.className = 'auth-msg error';
   }
 
@@ -3513,9 +3551,6 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
   <div class="account-dropdown-item" onclick="openAccountSettings(); closeDropdown()">
     <span class="account-dropdown-icon">⚙️</span> Account Settings
   </div>
-  <div class="account-dropdown-item" onclick="showScreen('dashboard'); closeDropdown()">
-    <span class="account-dropdown-icon">🏠</span> My Dashboard
-  </div>
   <div class="account-dropdown-item" onclick="showScreen('journal'); closeDropdown()">
     <span class="account-dropdown-icon">📖</span> My Journal
   </div>
@@ -3527,19 +3562,37 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
 
 <!-- ════════ ACCOUNT SETTINGS MODAL ════════ -->
 <div class="auth-modal-overlay" id="accountModal" onclick="closeAccountModal(event)">
-  <div class="auth-modal" style="max-width:420px">
+  <div class="auth-modal" style="max-width:440px">
     <button class="auth-close" onclick="document.getElementById('accountModal').classList.remove('open')">×</button>
     <div class="auth-modal-title">⚙️ Account Settings</div>
-    <div class="auth-modal-sub" id="accountEmail"></div>
     <div class="auth-form">
+
       <div class="form-group" style="margin:0">
         <label class="form-label">Username</label>
         <input class="form-input" id="accountUsername" type="text" placeholder="e.g. simqueen99" maxlength="30">
       </div>
+
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" id="accountEmailInput" type="email" placeholder="your@email.com">
+      </div>
+
+      <div style="border-top:1px solid var(--bg-pale);padding-top:14px">
+        <div style="font-size:0.72rem;font-weight:800;color:var(--action);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Change Password</div>
+        <div class="form-group" style="margin:0 0 10px">
+          <label class="form-label">New Password</label>
+          <input class="form-input" id="accountNewPassword" type="password" placeholder="Leave blank to keep current">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Confirm New Password</label>
+          <input class="form-input" id="accountConfirmPassword" type="password" placeholder="Repeat new password">
+        </div>
+      </div>
+
       <div class="auth-msg" id="accountMsg"></div>
       <button class="btn btn-primary" onclick="saveAccountSettings()" style="justify-content:center">💾 Save Changes</button>
       <div style="border-top:1px solid var(--bg-mid);padding-top:16px;margin-top:4px">
-        <button class="btn btn-outline" onclick="signOut()" style="justify-content:center;width:100%;color:#e05a5a;border-color:#e05a5a">Sign Out</button>
+        <button class="btn btn-outline" onclick="signOut()" style="justify-content:center;width:100%;color:#e05a5a;border-color:#e05a5a">🚪 Sign Out</button>
       </div>
     </div>
   </div>
