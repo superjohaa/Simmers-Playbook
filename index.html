@@ -1080,6 +1080,140 @@
     cursor: pointer; color: var(--mid);
   }
 
+
+  /* ══════════════════════════════════
+     SIM TRACKER
+  ══════════════════════════════════ */
+  .tracker-wrapper { max-width: 900px; margin: 0 auto; padding: 48px 32px; }
+  .tracker-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:14px; }
+  .tracker-title { font-family:'Lora',serif; font-size:2rem; font-weight:600; color:var(--ink); }
+  .tracker-sub { font-size:0.88rem; color:var(--mid); margin-top:4px; }
+
+  /* World grid */
+  .world-section { margin-bottom:36px; }
+  .world-section-title { font-size:0.72rem; font-weight:800; color:var(--action); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:14px; }
+  .world-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:10px; }
+  .world-card {
+    background:var(--white); border:2px solid var(--bg-mid); border-radius:14px;
+    padding:14px 12px; text-align:center; cursor:pointer; transition:all 0.2s;
+    position:relative;
+  }
+  .world-card:hover { border-color:var(--action); transform:translateY(-2px); }
+  .world-card.active { border-color:var(--action); background:var(--action-light); box-shadow:0 3px 0 var(--action-dark); }
+  .world-card.has-household { border-color:var(--action-dark); }
+  .world-emoji { font-size:1.6rem; margin-bottom:6px; }
+  .world-name { font-size:0.75rem; font-weight:800; color:var(--ink); line-height:1.3; }
+  .world-pack { font-size:0.65rem; color:var(--mid); margin-top:2px; }
+  .world-dot { width:8px; height:8px; background:var(--action); border-radius:50%; position:absolute; top:8px; right:8px; }
+
+  /* Household cards */
+  .households-section { margin-bottom:28px; }
+  .household-grid { display:flex; flex-direction:column; gap:16px; }
+  .household-card {
+    background:var(--white); border:2px solid var(--bg-mid); border-radius:20px;
+    padding:20px 24px; box-shadow:0 3px 0 var(--bg-mid);
+  }
+  .household-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+  .household-name { font-size:1.05rem; font-weight:900; color:var(--ink); }
+  .household-world { font-size:0.75rem; color:var(--mid); font-weight:700; margin-top:2px; }
+  .household-actions { display:flex; gap:8px; }
+  .hh-btn { background:none; border:1.5px solid var(--bg-mid); border-radius:8px; padding:5px 10px; font-size:0.75rem; font-weight:700; cursor:pointer; color:var(--mid); transition:all 0.2s; font-family:'Nunito',sans-serif; }
+  .hh-btn:hover { border-color:var(--action); color:var(--action-dark); }
+  .hh-btn.danger:hover { border-color:#e05a5a; color:#e05a5a; }
+
+  /* Sim cards */
+  .sims-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:12px; }
+  .sim-card {
+    background:var(--bg-pale); border:1.5px solid var(--bg-mid); border-radius:14px;
+    padding:14px; cursor:pointer; transition:all 0.2s; position:relative;
+  }
+  .sim-card:hover { border-color:var(--action); transform:translateY(-2px); box-shadow:0 4px 12px rgba(41,181,34,0.15); }
+  .sim-card.deceased { opacity:0.55; filter:grayscale(0.4); }
+  .sim-avatar { width:48px; height:48px; border-radius:50%; background:var(--action-light); display:flex; align-items:center; justify-content:center; font-size:1.4rem; margin:0 auto 8px; border:2px solid var(--action); }
+  .sim-name { font-size:0.88rem; font-weight:800; color:var(--ink); text-align:center; margin-bottom:4px; }
+  .sim-stage-badge { display:inline-block; font-size:0.65rem; font-weight:800; padding:2px 8px; border-radius:100px; text-align:center; width:100%; }
+  .stage-baby { background:#ffe8f3; color:#c94f8a; }
+  .stage-toddler { background:#fff3e0; color:#e65c00; }
+  .stage-child { background:#e8f5e9; color:#2e7d32; }
+  .stage-teen { background:#e3f2fd; color:#1565c0; }
+  .stage-ya { background:#f3e5f5; color:#6a1b9a; }
+  .stage-adult { background:#e8eaf6; color:#283593; }
+  .stage-elder { background:#f5f5f5; color:#424242; }
+  .stage-deceased { background:#fafafa; color:#9e9e9e; }
+  .sim-career { font-size:0.72rem; color:var(--mid); text-align:center; margin-top:4px; }
+  .add-sim-card {
+    background:var(--white); border:2px dashed var(--bg-mid); border-radius:14px;
+    padding:14px; cursor:pointer; transition:all 0.2s; text-align:center; color:var(--mid);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; min-height:120px;
+  }
+  .add-sim-card:hover { border-color:var(--action); color:var(--action); }
+  .add-sim-plus { font-size:1.8rem; line-height:1; }
+  .add-sim-label { font-size:0.75rem; font-weight:800; }
+
+  /* Sim detail modal */
+  .sim-modal .auth-modal { max-width:520px; max-height:88vh; overflow-y:auto; }
+  .sim-life-stage-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:4px; }
+  .stage-btn { padding:7px 4px; border-radius:8px; border:1.5px solid var(--bg-mid); font-size:0.7rem; font-weight:800; cursor:pointer; text-align:center; transition:all 0.15s; background:var(--white); color:var(--mid); font-family:'Nunito',sans-serif; }
+  .stage-btn.selected { border-color:var(--action); background:var(--action-light); color:var(--action-dark); }
+  .trait-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .trait-chip { font-size:0.72rem; font-weight:700; padding:4px 10px; border-radius:100px; background:var(--bg-pale); color:var(--ink); border:1.5px solid var(--bg-mid); cursor:pointer; transition:all 0.15s; }
+  .trait-chip.selected { background:var(--action-light); border-color:var(--action); color:var(--action-dark); }
+  .career-level-row { display:flex; gap:8px; align-items:center; }
+  .career-level-row input[type=range] { flex:1; }
+
+  /* Add household modal */
+  .add-hh-modal .auth-modal { max-width:440px; }
+
+  @media(max-width:600px) {
+    .tracker-wrapper { padding:32px 16px; }
+    .world-grid { grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
+    .sims-grid { grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); }
+  }
+
+
+  /* Pack filter */
+  .pack-filter-bar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+  .pack-filter-btn {
+    font-size:0.72rem; font-weight:800; padding:6px 14px; border-radius:100px;
+    border:1.5px solid var(--bg-mid); background:var(--white); color:var(--mid);
+    cursor:pointer; transition:all 0.18s; font-family:'Nunito',sans-serif;
+  }
+  .pack-filter-btn.owned { border-color:var(--action); background:var(--action-light); color:var(--action-dark); }
+  .pack-filter-btn.all-btn { border-color:var(--bg-darkest); background:var(--bg-pale); color:var(--bg-darkest); }
+
+  /* World gallery view */
+  .world-gallery-overlay {
+    position:fixed; inset:0; background:rgba(6,35,18,0.6); backdrop-filter:blur(6px);
+    z-index:9000; display:flex; flex-direction:column;
+    opacity:0; pointer-events:none; transition:opacity 0.2s;
+  }
+  .world-gallery-overlay.open { opacity:1; pointer-events:all; }
+  .world-gallery-header {
+    background:var(--action-darkest); padding:18px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  }
+  .world-gallery-header-left { display:flex; align-items:center; gap:14px; }
+  .world-gallery-back { background:rgba(255,255,255,0.15); border:none; border-radius:10px; padding:8px 14px; color:white; font-family:'Nunito',sans-serif; font-size:0.82rem; font-weight:800; cursor:pointer; }
+  .world-gallery-title { font-family:'Lora',serif; font-size:1.3rem; font-weight:600; color:white; }
+  .world-gallery-sub { font-size:0.78rem; color:rgba(255,255,255,0.65); margin-top:2px; }
+  .world-gallery-body { flex:1; overflow-y:auto; padding:28px; max-width:860px; width:100%; margin:0 auto; }
+  .world-gallery-empty { text-align:center; padding:60px 20px; color:rgba(255,255,255,0.6); }
+  .world-gallery-empty .we-icon { font-size:3rem; margin-bottom:14px; }
+  .world-gallery-empty p { font-size:0.9rem; margin-bottom:20px; }
+  .gallery-hh-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+  .gallery-hh-card {
+    background:var(--white); border-radius:18px; padding:20px;
+    cursor:pointer; transition:all 0.2s; border:2px solid transparent;
+    box-shadow:0 4px 20px rgba(0,0,0,0.12);
+  }
+  .gallery-hh-card:hover { transform:translateY(-4px); border-color:var(--action); box-shadow:0 8px 30px rgba(0,0,0,0.18); }
+  .gallery-hh-name { font-size:1rem; font-weight:900; color:var(--ink); margin-bottom:6px; }
+  .gallery-hh-sims { font-size:0.78rem; color:var(--mid); margin-bottom:12px; }
+  .gallery-sim-avatars { display:flex; gap:-4px; flex-wrap:wrap; gap:6px; }
+  .gallery-sim-avatar { width:36px; height:36px; border-radius:50%; background:var(--action-light); display:flex; align-items:center; justify-content:center; font-size:1rem; border:2px solid white; }
+  .gallery-hh-notes { font-size:0.75rem; color:var(--mid); font-style:italic; margin-top:10px; border-top:1px solid var(--bg-pale); padding-top:8px; line-height:1.4; }
+
   /* ══════════════════════════════════
      COMMUNITY SIGNUP SECTION
   ══════════════════════════════════ */
@@ -1349,6 +1483,7 @@
     <a onclick="showScreen('quiz')"   id="nav-quiz">Quiz</a>
     <a onclick="showScreen('prompt')" id="nav-prompt">Prompts</a>
     <a onclick="showScreen('journal')"id="nav-journal">Journal</a>
+    <a onclick="showScreen('tracker')" id="nav-tracker">My World</a>
     <div id="navAuthWrap" style="position:relative;margin-left:4px"><div id="navAuthBtn" onclick="openAuth()" style="display:flex;align-items:center;cursor:pointer">
       <span id="navAuthInner" style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.75);padding:8px 12px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.25);transition:all 0.2s;white-space:nowrap">🔒 Sign In</span>
     </div>
@@ -1448,6 +1583,12 @@
         <div class="dash-card-label">🎭 Your Simmer Type</div>
         <div id="dashQuizResult">
           <div class="dash-card-empty">Take the quiz to discover your playstyle!</div>
+        </div>
+      </div>
+      <div class="dash-card" onclick="showScreen('tracker')" style="grid-column:1/-1">
+        <div class="dash-card-label">🌍 My World</div>
+        <div id="dashTrackerPreview">
+          <div class="dash-card-empty">No households tracked yet — set up your forever save!</div>
         </div>
       </div>
     </div>
@@ -2205,6 +2346,7 @@ window.showScreen = function(id) {
   if (id === 'journal') renderEntries(activeFilter);
   if (id === 'prompt' && lastPromptIdx === -1) randomPrompt();
   if (id === 'dashboard') renderDashboard();
+  if (id === 'tracker') renderTracker();
   // hide footer on admin screen
   const footer = document.getElementById('siteFooter');
   if (footer) footer.style.display = (id === 'admin' || id === 'dashboard') ? 'none' : '';
@@ -3006,6 +3148,28 @@ function renderDashboard() {
     `;
   }
 
+  // tracker preview
+  try {
+    const td = getTracker();
+    const prev = document.getElementById('dashTrackerPreview');
+    if (prev) {
+      if (td.households && td.households.length > 0) {
+        const totalSims = td.households.reduce((a,h) => a + (h.sims||[]).length, 0);
+        const totalWorlds = (td.worlds||[]).length;
+        prev.innerHTML = `
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div><div style="font-size:1.4rem;font-weight:900;color:var(--action-dark)">${td.households.length}</div><div style="font-size:0.75rem;color:var(--mid)">Households</div></div>
+            <div><div style="font-size:1.4rem;font-weight:900;color:var(--action-dark)">${totalSims}</div><div style="font-size:0.75rem;color:var(--mid)">Sims tracked</div></div>
+            <div><div style="font-size:1.4rem;font-weight:900;color:var(--action-dark)">${totalWorlds}</div><div style="font-size:0.75rem;color:var(--mid)">Worlds active</div></div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--action);margin-top:8px;font-weight:700">View My World →</div>
+        `;
+      } else {
+        prev.innerHTML = '<div class="dash-card-empty">No households tracked yet — set up your forever save!</div>';
+      }
+    }
+  } catch(e) {}
+
   // streak
   const entries2 = loadEntries();
   updateStreak(entries2);
@@ -3347,6 +3511,479 @@ function signOut() {
   showScreen('home');
   document.getElementById('accountModal').classList.remove('open');
   showToast('Signed out');
+}
+
+
+// ══════════════════════════════════════
+// SIM TRACKER
+// ══════════════════════════════════════
+const TRACKER_KEY = 'sp_tracker';
+
+const ALL_WORLDS = [
+  // Base Game
+  { id:'willow_creek',   name:'Willow Creek',      emoji:'🌳', pack:'Base Game',         vibe:'Suburban' },
+  { id:'oasis_springs',  name:'Oasis Springs',      emoji:'🌵', pack:'Base Game',         vibe:'Desert' },
+  { id:'newcrest',       name:'Newcrest',            emoji:'🏗️', pack:'Base Game',         vibe:'Empty lots' },
+  // Expansions
+  { id:'windenburg',     name:'Windenburg',          emoji:'🏰', pack:'Get Together',      vibe:'European' },
+  { id:'san_myshuno',    name:'San Myshuno',         emoji:'🌆', pack:'City Living',       vibe:'City' },
+  { id:'brindleton_bay', name:'Brindleton Bay',      emoji:'⚓', pack:'Cats & Dogs',       vibe:'Coastal' },
+  { id:'sulani',         name:'Sulani',              emoji:'🌺', pack:'Island Living',     vibe:'Tropical' },
+  { id:'britechester',   name:'Britechester',        emoji:'🎓', pack:'Discover University', vibe:'College town' },
+  { id:'evergreen',      name:'Evergreen Harbour',   emoji:'♻️', pack:'Eco Lifestyle',     vibe:'Industrial' },
+  { id:'mt_komorebi',    name:'Mt. Komorebi',        emoji:'⛷️', pack:'Snowy Escape',      vibe:'Mountain' },
+  { id:'henford',        name:'Henford-on-Bagley',   emoji:'🐄', pack:'Cottage Living',    vibe:'Countryside' },
+  { id:'copperdale',     name:'Copperdale',          emoji:'🏫', pack:'High School Years', vibe:'Teen town' },
+  { id:'san_sequoia',    name:'San Sequoia',         emoji:'🌲', pack:'Growing Together',  vibe:'Family suburb' },
+  { id:'chestnut_ridge', name:'Chestnut Ridge',      emoji:'🐎', pack:'Horse Ranch',       vibe:'Ranch' },
+  { id:'tomarang',       name:'Tomarang',            emoji:'🏮', pack:'For Rent',          vibe:'Southeast Asian' },
+  // Game Packs
+  { id:'forgotten_hollow', name:'Forgotten Hollow',  emoji:'🧛', pack:'Vampires',          vibe:'Gothic' },
+  { id:'glimmerbrook',   name:'Glimmerbrook',        emoji:'🔮', pack:'Realm of Magic',    vibe:'Magical' },
+  { id:'strangerville',  name:'StrangerVille',       emoji:'👽', pack:'StrangerVille',     vibe:'Mystery' },
+  { id:'moonwood_mill',  name:'Moonwood Mill',       emoji:'🐺', pack:'Werewolves',        vibe:'Forest' },
+  { id:'tartosa',        name:'Tartosa',             emoji:'💒', pack:'My Wedding Stories', vibe:'Mediterranean' },
+  { id:'copperdale_hs',  name:'Copperdale (HS)',     emoji:'🎒', pack:'High School Years', vibe:'Teen' },
+];
+
+const LIFE_STAGES = ['Baby','Toddler','Child','Teen','Young Adult','Adult','Elder','Deceased'];
+const STAGE_KEYS  = ['baby','toddler','child','teen','ya','adult','elder','deceased'];
+const STAGE_EMOJIS = ['👶','🧒','🧒','🧑','🧑','🧔','👴','👻'];
+
+const CAREERS = [
+  'Actor','Astronaut','Athlete','Business','Chef','Conservationist',
+  'Criminal','Critic','Detective','Doctor','Engineer','Entertainer',
+  'Freelancer','Gardener','Law Enforcement','Military','Musician',
+  'Painter','Politician','Scientist','Secret Agent','Social Media',
+  'Tech Guru','Writer','Unemployed','Student','Stay at Home'
+];
+
+const ASPIRATIONS = [
+  'Academic','Athletic','Big Happy Family','Chief of Mischief',
+  'Computer Whiz','Curator','Family Oriented','Freelance Botanist',
+  'Friend of the World','Fabulously Wealthy','Grilled Cheese','Leader of the Pack',
+  'Master Chef','Master Mixologist','Mansion Baron','Musical Genius',
+  'Nerd Brain','Painter Extraordinaire','Painter Extraordinaire','Party Animal',
+  'Popularity','Renaissance Sim','Rambunctious Scamp','Responsible',
+  'Serial Romantic','Soulmate','Successful Lineage','The Curator',
+  'Villa Villain','Villain','Whiz Kid','World Famous Celebrity'
+];
+
+const ALL_TRAITS = [
+  'Active','Ambitious','Art Lover','Bookworm','Bro','Business Savvy',
+  'Cheerful','Childish','Clumsy','Creative','Cruelty Free','Cultivator',
+  'Dog Lover','Cat Lover','Erratic','Evil','Family Oriented','Foodie',
+  'Gloomy','Geek','Good','Goofball','Green Fiend','Genius',
+  'Hot Headed','High Maintenance','Insider','Kleptomaniac','Lazy',
+  'Loner','Loyal','Mean','Music Lover','Materialistic','Muser',
+  'Nature Lover','Neat','Noncommittal','Outgoing','Paranoid',
+  'Perfectionist','Proper','Romantic','Self Absorbed','Self Assured',
+  'Slob','Snob','Squeamish','Survivalist','Unflirty','Vegetarian',
+  'Ambitious','Vengeful','Wild'
+];
+
+function getTracker() {
+  try { return JSON.parse(localStorage.getItem(TRACKER_KEY)) || { worlds:[], households:[] }; }
+  catch { return { worlds:[], households:[] }; }
+}
+function saveTracker(data) { localStorage.setItem(TRACKER_KEY, JSON.stringify(data)); }
+
+// ── Render world grid ──
+function renderPackFilter() {
+  const data = getTracker();
+  const ownedPacks = new Set(data.ownedPacks || []);
+  const bar = document.getElementById('packFilterBar');
+  if (!bar) return;
+  const packs = [...new Set(ALL_WORLDS.map(w => w.pack))];
+  bar.innerHTML =
+    `<button class="pack-filter-btn all-btn" onclick="toggleAllPacks()">${ownedPacks.size === 0 ? 'Select Packs' : 'Clear All'}</button>` +
+    packs.map(p => `<button class="pack-filter-btn ${ownedPacks.has(p) ? 'owned' : ''}" onclick="togglePack('${p}')">${p}</button>`).join('');
+}
+
+function togglePack(pack) {
+  const data = getTracker();
+  const owned = new Set(data.ownedPacks || []);
+  owned.has(pack) ? owned.delete(pack) : owned.add(pack);
+  data.ownedPacks = [...owned];
+  saveTracker(data);
+  renderPackFilter();
+  renderWorldGrid();
+}
+
+function toggleAllPacks() {
+  const data = getTracker();
+  data.ownedPacks = [];
+  saveTracker(data);
+  renderPackFilter();
+  renderWorldGrid();
+}
+
+function renderWorldGrid() {
+  const data = getTracker();
+  const active = new Set(data.worlds || []);
+  const owned = new Set(data.ownedPacks || []);
+  const grid = document.getElementById('worldGrid');
+  if (!grid) return;
+
+  // filter worlds: if no packs selected show all, else show only owned
+  const visible = owned.size > 0 ? ALL_WORLDS.filter(w => owned.has(w.pack)) : ALL_WORLDS;
+  const worldsWithHh = new Set((data.households || []).map(h => h.world));
+
+  if (visible.length === 0) {
+    grid.innerHTML = '<div style="color:var(--mid);font-size:0.85rem;padding:20px 0">No worlds match your selected packs.</div>';
+    return;
+  }
+
+  grid.innerHTML = visible.map(w => `
+    <div class="world-card ${active.has(w.id) ? 'active' : ''} ${worldsWithHh.has(w.id) ? 'has-household' : ''}"
+         onclick="openWorldGallery('${w.id}')">
+      ${worldsWithHh.has(w.id) ? '<div class="world-dot"></div>' : ''}
+      <div class="world-emoji">${w.emoji}</div>
+      <div class="world-name">${w.name}</div>
+      <div class="world-pack">${w.pack}</div>
+    </div>
+  `).join('');
+}
+
+function openWorldGallery(worldId) {
+  const world = ALL_WORLDS.find(w => w.id === worldId);
+  if (!world) return;
+
+  // mark world as active in save
+  const data = getTracker();
+  const active = new Set(data.worlds || []);
+  active.add(worldId);
+  data.worlds = [...active];
+  saveTracker(data);
+
+  document.getElementById('galleryWorldTitle').textContent = world.emoji + ' ' + world.name;
+  document.getElementById('galleryWorldSub').textContent = world.pack + ' · ' + world.vibe;
+
+  renderWorldGallery(worldId);
+  document.getElementById('worldGallery').classList.add('open');
+}
+
+function closeWorldGallery() {
+  document.getElementById('worldGallery').classList.remove('open');
+  renderWorldGrid();
+}
+
+function renderWorldGallery(worldId) {
+  const data = getTracker();
+  const hhs = (data.households || []).filter(h => h.world === worldId);
+  const content = document.getElementById('galleryContent');
+
+  if (hhs.length === 0) {
+    content.innerHTML = `
+      <div class="world-gallery-empty">
+        <div class="we-icon">🏠</div>
+        <p>No households in this world yet.</p>
+        <button class="btn btn-primary" onclick="openAddHhInWorld('${worldId}')" style="justify-content:center">＋ Add a Household</button>
+      </div>`;
+    return;
+  }
+
+  content.innerHTML = `<div class="gallery-hh-grid">
+    ${hhs.map((hh, i) => {
+      const hhIdx = data.households.indexOf(hh);
+      const avatars = (hh.sims || []).slice(0, 6).map(s =>
+        `<div class="gallery-sim-avatar">${s.avatar || '🧑'}</div>`
+      ).join('');
+      const simCount = (hh.sims || []).length;
+      return `
+        <div class="gallery-hh-card" onclick="expandGalleryHousehold(${hhIdx})">
+          <div class="gallery-hh-name">${escHtml(hh.name)}</div>
+          <div class="gallery-hh-sims">${simCount} ${simCount === 1 ? 'Sim' : 'Sims'}</div>
+          <div class="gallery-sim-avatars">${avatars}${simCount > 6 ? `<div class="gallery-sim-avatar" style="background:var(--bg-mid);color:var(--mid);font-size:0.72rem;font-weight:800">+${simCount-6}</div>` : ''}</div>
+          ${hh.notes ? `<div class="gallery-hh-notes">${escHtml(hh.notes.substring(0,80))}${hh.notes.length>80?'…':''}</div>` : ''}
+        </div>`;
+    }).join('')}
+    <div class="gallery-hh-card" style="border:2px dashed rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:140px" onclick="openAddHhInWorld('${worldId}')">
+      <div style="font-size:2rem;color:rgba(255,255,255,0.4)">＋</div>
+      <div style="font-size:0.78rem;font-weight:800;color:rgba(255,255,255,0.4)">Add Household</div>
+    </div>
+  </div>`;
+}
+
+function expandGalleryHousehold(hhIdx) {
+  closeWorldGallery();
+  // scroll to household in main view
+  setTimeout(() => {
+    showScreen('tracker');
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.household-card');
+      if (cards[hhIdx]) cards[hhIdx].scrollIntoView({ behavior:'smooth', block:'center' });
+    }, 300);
+  }, 200);
+}
+
+function openAddHhInWorld(worldId) {
+  closeWorldGallery();
+  openAddHousehold();
+  // pre-select the world
+  setTimeout(() => {
+    const sel = document.getElementById('hhWorld');
+    if (sel) sel.value = worldId;
+  }, 100);
+}
+
+// ── Render households ──
+function renderHouseholds() {
+  const data = getTracker();
+  const grid = document.getElementById('householdGrid');
+  if (!grid) return;
+
+  if (!data.households || data.households.length === 0) {
+    grid.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mid);font-size:0.88rem">No households yet — add your first one above!</div>';
+    return;
+  }
+
+  grid.innerHTML = data.households.map((hh, hi) => {
+    const world = ALL_WORLDS.find(w => w.id === hh.world);
+    const sims = hh.sims || [];
+    const simCards = sims.map((s, si) => `
+      <div class="sim-card ${s.stage === 'deceased' ? 'deceased' : ''}" onclick="openSimModal(${hi}, ${si})">
+        <div class="sim-avatar">${s.avatar || STAGE_EMOJIS[STAGE_KEYS.indexOf(s.stage)] || '🧑'}</div>
+        <div class="sim-name">${escHtml(s.name)}</div>
+        <div class="sim-stage-badge stage-${s.stage || 'ya'}">${LIFE_STAGES[STAGE_KEYS.indexOf(s.stage)] || 'Young Adult'}</div>
+        <div class="sim-career">${s.career ? escHtml(s.career) + (s.career_level ? ' · Lvl ' + s.career_level : '') : ''}</div>
+      </div>
+    `).join('');
+
+    return `
+      <div class="household-card">
+        <div class="household-header">
+          <div>
+            <div class="household-name">${world ? world.emoji + ' ' : ''}${escHtml(hh.name)}</div>
+            <div class="household-world">${world ? world.name + ' · ' + world.pack : ''}</div>
+          </div>
+          <div class="household-actions">
+            <button class="hh-btn" onclick="openAddHousehold(${hi})">✏️ Edit</button>
+            <button class="hh-btn danger" onclick="deleteHousehold(${hi})">🗑️</button>
+          </div>
+        </div>
+        <div class="sims-grid">
+          ${simCards}
+          <div class="add-sim-card" onclick="openSimModal(${hi}, -1)">
+            <div class="add-sim-plus">＋</div>
+            <div class="add-sim-label">Add Sim</div>
+          </div>
+        </div>
+        ${hh.notes ? `<div style="margin-top:14px;font-size:0.8rem;color:var(--mid);font-style:italic;border-top:1px solid var(--bg-pale);padding-top:10px">${escHtml(hh.notes)}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderTracker() {
+  renderPackFilter();
+  renderWorldGrid();
+  renderHouseholds();
+}
+
+// ── Add/Edit Household ──
+let editingHhIdx = -1;
+
+function openAddHousehold(idx) {
+  editingHhIdx = idx !== undefined ? idx : -1;
+  const data = getTracker();
+  const hh = editingHhIdx > -1 ? data.households[editingHhIdx] : null;
+
+  document.getElementById('addHhTitle').textContent = hh ? '✏️ Edit Household' : '＋ New Household';
+  document.getElementById('hhName').value = hh ? hh.name : '';
+  document.getElementById('hhNotes').value = hh ? (hh.notes || '') : '';
+  document.getElementById('hhMsg').textContent = '';
+
+  // populate world select
+  const sel = document.getElementById('hhWorld');
+  sel.innerHTML = '<option value="">— select a world —</option>' +
+    ALL_WORLDS.map(w => `<option value="${w.id}" ${hh && hh.world === w.id ? 'selected' : ''}>${w.emoji} ${w.name} (${w.pack})</option>`).join('');
+
+  document.getElementById('addHhModal').classList.add('open');
+  setTimeout(() => document.getElementById('hhName').focus(), 100);
+}
+
+function closeAddHousehold() {
+  document.getElementById('addHhModal').classList.remove('open');
+}
+
+function saveHousehold() {
+  const name = document.getElementById('hhName').value.trim();
+  const world = document.getElementById('hhWorld').value;
+  const notes = document.getElementById('hhNotes').value.trim();
+  const msg = document.getElementById('hhMsg');
+
+  if (!name) { msg.textContent = 'Please enter a household name.'; msg.className = 'auth-msg error'; return; }
+
+  const data = getTracker();
+  if (editingHhIdx > -1) {
+    data.households[editingHhIdx].name = name;
+    data.households[editingHhIdx].world = world;
+    data.households[editingHhIdx].notes = notes;
+  } else {
+    data.households.push({ id: Date.now().toString(), name, world, notes, sims: [] });
+  }
+  saveTracker(data);
+  closeAddHousehold();
+  renderTracker();
+  showToast(editingHhIdx > -1 ? '✓ Household updated!' : '✓ Household added!');
+}
+
+function deleteHousehold(idx) {
+  if (!confirm('Delete this household and all their Sims? This cannot be undone.')) return;
+  const data = getTracker();
+  data.households.splice(idx, 1);
+  saveTracker(data);
+  renderTracker();
+  showToast('🗑️ Household deleted');
+}
+
+// ── Sim Modal ──
+let editingSimHhIdx = -1;
+let editingSimIdx = -1;
+let selectedTraits = [];
+let selectedStage = 'ya';
+
+function openSimModal(hhIdx, simIdx) {
+  editingSimHhIdx = hhIdx;
+  editingSimIdx = simIdx;
+  const data = getTracker();
+  const sim = simIdx > -1 ? data.households[hhIdx].sims[simIdx] : null;
+
+  selectedTraits = sim ? [...(sim.traits || [])] : [];
+  selectedStage = sim ? (sim.stage || 'ya') : 'ya';
+
+  document.getElementById('simModalTitle').textContent = sim ? '✏️ Edit Sim' : '＋ Add Sim';
+
+  document.getElementById('simModalForm').innerHTML = `
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Avatar Emoji</label>
+      <div style="display:flex;gap:10px;align-items:center">
+        <input class="form-input" id="simAvatar" placeholder="🧑" maxlength="4" style="width:80px;text-align:center;font-size:1.4rem" value="${sim ? sim.avatar || '' : ''}">
+        <div style="font-size:0.78rem;color:var(--mid)">Pick any emoji that looks like your Sim!</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Sim Name</label>
+      <input class="form-input" id="simName" placeholder="e.g. Bella Goth" value="${sim ? escHtml(sim.name) : ''}">
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Life Stage</label>
+      <div class="sim-life-stage-grid">
+        ${LIFE_STAGES.map((s, i) => `<button class="stage-btn ${STAGE_KEYS[i] === selectedStage ? 'selected' : ''}" onclick="selectStage('${STAGE_KEYS[i]}', this)">${STAGE_EMOJIS[i]} ${s}</button>`).join('')}
+      </div>
+    </div>
+    <div class="admin-form-row">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Career</label>
+        <select class="form-select" id="simCareer">
+          <option value="">— select —</option>
+          ${CAREERS.map(c => `<option value="${c}" ${sim && sim.career === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Career Level</label>
+        <div class="career-level-row">
+          <input type="range" min="1" max="10" value="${sim ? sim.career_level || 1 : 1}" id="simCareerLevel" oninput="document.getElementById('careerLevelNum').textContent=this.value">
+          <span id="careerLevelNum" style="font-weight:800;color:var(--action-dark);min-width:20px">${sim ? sim.career_level || 1 : 1}</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Aspiration</label>
+      <select class="form-select" id="simAspiration">
+        <option value="">— select —</option>
+        ${ASPIRATIONS.map(a => `<option value="${a}" ${sim && sim.aspiration === a ? 'selected' : ''}>${a}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Traits (pick up to 4)</label>
+      <div class="trait-grid" id="traitGrid">
+        ${ALL_TRAITS.map(t => `<div class="trait-chip ${selectedTraits.includes(t) ? 'selected' : ''}" onclick="toggleTrait('${t}', this)">${t}</div>`).join('')}
+      </div>
+    </div>
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Their Story / Legacy Notes</label>
+      <textarea class="form-textarea" id="simNotes" style="min-height:80px" placeholder="What has this Sim been through? What are they working toward?">${sim ? escHtml(sim.notes || '') : ''}</textarea>
+    </div>
+    ${selectedStage === 'deceased' ? `
+    <div class="form-group" style="margin:0">
+      <label class="form-label">Cause of Death</label>
+      <select class="form-select" id="simDeath">
+        <option value="">— select —</option>
+        ${['Old Age','Fire','Drowning','Starvation','Electrocution','Cowplant','Embarrassment','Laughter','Overexertion','Pufferfish','Rabid Rodent','Steam','Freezing','Hysteria','Murphy Bed','Other'].map(d => `<option value="${d}" ${sim && sim.death_cause === d ? 'selected' : ''}>${d}</option>`).join('')}
+      </select>
+    </div>` : ''}
+    ${simIdx > -1 ? `<button style="background:none;border:none;color:#e05a5a;font-size:0.8rem;font-weight:700;cursor:pointer;padding:4px 0;font-family:Nunito,sans-serif" onclick="deleteSim(${hhIdx},${simIdx})">🗑️ Delete this Sim</button>` : ''}
+  `;
+
+  document.getElementById('simModal').classList.add('open');
+}
+
+function selectStage(key, btn) {
+  selectedStage = key;
+  document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  // show/hide death cause field
+  const deathField = document.querySelector('#simModalForm .form-group:has(#simDeath)');
+  if (key === 'deceased' && !document.getElementById('simDeath')) {
+    openSimModal(editingSimHhIdx, editingSimIdx); // re-render with death field
+  }
+}
+
+function toggleTrait(trait, el) {
+  if (selectedTraits.includes(trait)) {
+    selectedTraits = selectedTraits.filter(t => t !== trait);
+    el.classList.remove('selected');
+  } else {
+    if (selectedTraits.length >= 4) { showToast('⚠️ Max 4 traits'); return; }
+    selectedTraits.push(trait);
+    el.classList.add('selected');
+  }
+}
+
+function saveSim() {
+  const name = document.getElementById('simName').value.trim();
+  if (!name) { showToast('⚠️ Please enter a name'); return; }
+
+  const sim = {
+    id: Date.now().toString(),
+    name,
+    avatar: document.getElementById('simAvatar').value.trim() || '',
+    stage: selectedStage,
+    career: document.getElementById('simCareer').value,
+    career_level: parseInt(document.getElementById('simCareerLevel').value),
+    aspiration: document.getElementById('simAspiration').value,
+    traits: [...selectedTraits],
+    notes: document.getElementById('simNotes').value.trim(),
+    death_cause: document.getElementById('simDeath')?.value || ''
+  };
+
+  const data = getTracker();
+  if (editingSimIdx > -1) {
+    sim.id = data.households[editingSimHhIdx].sims[editingSimIdx].id;
+    data.households[editingSimHhIdx].sims[editingSimIdx] = sim;
+  } else {
+    data.households[editingSimHhIdx].sims.push(sim);
+  }
+  saveTracker(data);
+  closeSimModal();
+  renderTracker();
+  showToast(editingSimIdx > -1 ? '✓ Sim updated!' : '✓ Sim added!');
+}
+
+function deleteSim(hhIdx, simIdx) {
+  if (!confirm('Remove this Sim? This cannot be undone.')) return;
+  const data = getTracker();
+  data.households[hhIdx].sims.splice(simIdx, 1);
+  saveTracker(data);
+  closeSimModal();
+  renderTracker();
+  showToast('🗑️ Sim removed');
+}
+
+function closeSimModal() {
+  document.getElementById('simModal').classList.remove('open');
 }
 
 // ══════════════════════════════════════
@@ -3826,6 +4463,106 @@ document.addEventListener('DOMContentLoaded', function restoreSession() {
     <div style="display:flex;gap:10px">
       <button class="btn btn-outline" onclick="skipImport()" style="flex:1;justify-content:center">Skip</button>
       <button class="btn btn-primary" onclick="importLocalEntries()" style="flex:1;justify-content:center">Import ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MY WORLD TRACKER ════════ -->
+<div id="tracker" class="screen">
+  <div class="tracker-wrapper">
+
+    <div class="tracker-topbar">
+      <div>
+        <div class="tracker-title">🌍 My World</div>
+        <div class="tracker-sub">Track your forever save — households, Sims, careers and legacies.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddHousehold()">＋ Add Household</button>
+    </div>
+
+    <!-- Pack filter -->
+    <div class="world-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="world-section-title" style="margin:0">📦 Packs You Own</div>
+        <span style="font-size:0.72rem;color:var(--mid)">Tap to toggle — hides worlds you don't have</span>
+      </div>
+      <div class="pack-filter-bar" id="packFilterBar"></div>
+    </div>
+
+    <!-- World Map -->
+    <div class="world-section">
+      <div class="world-section-title">📍 Worlds — tap to view households</div>
+      <div class="world-grid" id="worldGrid"></div>
+    </div>
+
+    <!-- Households (all, below map) -->
+    <div class="households-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div class="world-section-title" style="margin:0">🏠 All Households</div>
+      </div>
+      <div class="household-grid" id="householdGrid">
+        <div style="text-align:center;padding:40px;color:var(--mid);font-size:0.88rem">
+          No households yet — add your first one above!
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ WORLD GALLERY OVERLAY ════════ -->
+<div class="world-gallery-overlay" id="worldGallery">
+  <div class="world-gallery-header">
+    <div class="world-gallery-header-left">
+      <button class="world-gallery-back" onclick="closeWorldGallery()">← Back</button>
+      <div>
+        <div class="world-gallery-title" id="galleryWorldTitle">World Name</div>
+        <div class="world-gallery-sub" id="galleryWorldSub">Pack · Vibe</div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="openAddHousehold()" style="font-size:0.82rem;padding:10px 18px">＋ Add Household Here</button>
+  </div>
+  <div class="world-gallery-body">
+    <div id="galleryContent"></div>
+  </div>
+</div>
+
+<!-- Add Household Modal -->
+<div class="auth-modal-overlay add-hh-modal" id="addHhModal" onclick="if(event.target===this)closeAddHousehold()">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeAddHousehold()">×</button>
+    <div class="auth-modal-title" id="addHhTitle">＋ New Household</div>
+    <div class="auth-form">
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Household Name</label>
+        <input class="form-input" id="hhName" placeholder="e.g. The Goth Family">
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">World / Location</label>
+        <select class="form-select" id="hhWorld">
+          <option value="">— select a world —</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label class="form-label">Notes (optional)</label>
+        <textarea class="form-textarea" id="hhNotes" placeholder="Generation 1, legacy rules, story so far..." style="min-height:70px"></textarea>
+      </div>
+      <div class="auth-msg" id="hhMsg"></div>
+      <button class="btn btn-primary" onclick="saveHousehold()" style="justify-content:center">💾 Save Household</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sim Profile Modal -->
+<div class="auth-modal-overlay sim-modal" id="simModal" onclick="if(event.target===this)closeSimModal()">
+  <div class="auth-modal">
+    <button class="auth-close" onclick="closeSimModal()">×</button>
+    <div class="auth-modal-title" id="simModalTitle">Add Sim</div>
+    <div class="auth-form" id="simModalForm">
+      <!-- populated by JS -->
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;padding:0 2px">
+      <button class="btn btn-outline" onclick="closeSimModal()" style="flex:1;justify-content:center">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSim()" style="flex:1;justify-content:center">💾 Save Sim</button>
     </div>
   </div>
 </div>
