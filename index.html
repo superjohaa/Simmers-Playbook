@@ -3548,7 +3548,23 @@ const ALL_WORLDS = [
 
 const LIFE_STAGES = ['Baby','Toddler','Child','Teen','Young Adult','Adult','Elder','Deceased'];
 const STAGE_KEYS  = ['baby','toddler','child','teen','ya','adult','elder','deceased'];
-const STAGE_EMOJIS = ['👶','🧒','🧒','🧑','🧑','🧔','👴','👻'];
+const STAGE_EMOJIS_F = ['👶','🧒','👧','👧','👩','👩','👵','👻'];
+const STAGE_EMOJIS_M = ['👶','🧒','👦','👦','👨','👨','👴','👻'];
+const STAGE_EMOJIS   = STAGE_EMOJIS_F; // default
+
+function getSimEmoji(gender, stage) {
+  const idx = STAGE_KEYS.indexOf(stage);
+  if (idx < 0) return '🧑';
+  if (gender === 'f') return STAGE_EMOJIS_F[idx];
+  if (gender === 'm') return STAGE_EMOJIS_M[idx];
+  return ['👶','🧒','🧒','🧑','🧑','🧑','🧓','👻'][idx];
+}
+
+function getSimAvatarClass(gender, stage) {
+  const g = gender === 'f' ? 'f' : gender === 'm' ? 'm' : null;
+  if (!g) return '';
+  return g + '-' + (stage || 'ya');
+}
 
 const CAREERS = [
   'Actor','Astronaut','Athlete','Business','Chef','Conservationist',
@@ -3635,7 +3651,7 @@ function renderWorldGrid() {
   }
 
   grid.innerHTML = visible.map(w => `
-    <div class="world-card ${active.has(w.id) ? 'active' : ''} ${worldsWithHh.has(w.id) ? 'has-household' : ''}"
+    <div class="world-card ${worldsWithHh.has(w.id) ? 'active has-household' : ''}"
          onclick="openWorldGallery('${w.id}')">
       ${worldsWithHh.has(w.id) ? '<div class="world-dot"></div>' : ''}
       <div class="world-emoji">${w.emoji}</div>
@@ -3649,13 +3665,7 @@ function openWorldGallery(worldId) {
   const world = ALL_WORLDS.find(w => w.id === worldId);
   if (!world) return;
 
-  // mark world as active in save
   const data = getTracker();
-  const active = new Set(data.worlds || []);
-  active.add(worldId);
-  data.worlds = [...active];
-  saveTracker(data);
-
   document.getElementById('galleryWorldTitle').textContent = world.emoji + ' ' + world.name;
   document.getElementById('galleryWorldSub').textContent = world.pack + ' · ' + world.vibe;
 
@@ -3687,7 +3697,7 @@ function renderWorldGallery(worldId) {
     ${hhs.map((hh, i) => {
       const hhIdx = data.households.indexOf(hh);
       const avatars = (hh.sims || []).slice(0, 6).map(s =>
-        `<div class="gallery-sim-avatar">${s.avatar || '🧑'}</div>`
+        `<div class="gallery-sim-avatar ${getSimAvatarClass(s.gender, s.stage)}" style="font-size:1rem">${s.avatar || getSimEmoji(s.gender, s.stage)}</div>`
       ).join('');
       const simCount = (hh.sims || []).length;
       return `
@@ -3743,7 +3753,7 @@ function renderHouseholds() {
     const sims = hh.sims || [];
     const simCards = sims.map((s, si) => `
       <div class="sim-card ${s.stage === 'deceased' ? 'deceased' : ''}" onclick="openSimModal(${hi}, ${si})">
-        <div class="sim-avatar">${s.avatar || STAGE_EMOJIS[STAGE_KEYS.indexOf(s.stage)] || '🧑'}</div>
+        <div class="sim-avatar ${getSimAvatarClass(s.gender, s.stage)}">${s.avatar || getSimEmoji(s.gender, s.stage)}</div>
         <div class="sim-name">${escHtml(s.name)}</div>
         <div class="sim-stage-badge stage-${s.stage || 'ya'}">${LIFE_STAGES[STAGE_KEYS.indexOf(s.stage)] || 'Young Adult'}</div>
         <div class="sim-career">${s.career ? escHtml(s.career) + (s.career_level ? ' · Lvl ' + s.career_level : '') : ''}</div>
@@ -3843,6 +3853,7 @@ let editingSimHhIdx = -1;
 let editingSimIdx = -1;
 let selectedTraits = [];
 let selectedStage = 'ya';
+let selectedGender = 'f';
 
 function openSimModal(hhIdx, simIdx) {
   editingSimHhIdx = hhIdx;
@@ -3852,15 +3863,17 @@ function openSimModal(hhIdx, simIdx) {
 
   selectedTraits = sim ? [...(sim.traits || [])] : [];
   selectedStage = sim ? (sim.stage || 'ya') : 'ya';
+  selectedGender = sim ? (sim.gender || 'f') : 'f';
 
   document.getElementById('simModalTitle').textContent = sim ? '✏️ Edit Sim' : '＋ Add Sim';
 
   document.getElementById('simModalForm').innerHTML = `
     <div class="form-group" style="margin:0">
-      <label class="form-label">Avatar Emoji</label>
-      <div style="display:flex;gap:10px;align-items:center">
-        <input class="form-input" id="simAvatar" placeholder="🧑" maxlength="4" style="width:80px;text-align:center;font-size:1.4rem" value="${sim ? sim.avatar || '' : ''}">
-        <div style="font-size:0.78rem;color:var(--mid)">Pick any emoji that looks like your Sim!</div>
+      <label class="form-label">Gender</label>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="stage-btn ${!sim || sim.gender === 'f' ? 'selected' : ''}" id="genderF" onclick="selectGender('f')">👩 Female</button>
+        <button type="button" class="stage-btn ${sim && sim.gender === 'm' ? 'selected' : ''}" id="genderM" onclick="selectGender('m')">👨 Male</button>
+        <button type="button" class="stage-btn ${sim && sim.gender === 'nb' ? 'selected' : ''}" id="genderNB" onclick="selectGender('nb')">🧑 Non-binary</button>
       </div>
     </div>
     <div class="form-group" style="margin:0">
@@ -3920,10 +3933,28 @@ function openSimModal(hhIdx, simIdx) {
   document.getElementById('simModal').classList.add('open');
 }
 
+function selectGender(g) {
+  selectedGender = g;
+  ['f','m','nb'].forEach(x => {
+    const el = document.getElementById('gender' + x.charAt(0).toUpperCase() + x.slice(1));
+    if (el) el.classList.toggle('selected', x === g);
+  });
+  // update avatar preview emoji
+  const avatarInput = document.getElementById('simAvatar');
+  if (avatarInput && !avatarInput.dataset.userSet) {
+    avatarInput.value = getSimEmoji(g, selectedStage);
+  }
+}
+
 function selectStage(key, btn) {
   selectedStage = key;
-  document.querySelectorAll('.stage-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.stage-btn:not(#genderF):not(#genderM):not(#genderNB)').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
+  // update avatar emoji
+  const avatarInput = document.getElementById('simAvatar');
+  if (avatarInput && !avatarInput.dataset.userSet) {
+    avatarInput.value = getSimEmoji(selectedGender, key);
+  }
   // show/hide death cause field
   const deathField = document.querySelector('#simModalForm .form-group:has(#simDeath)');
   if (key === 'deceased' && !document.getElementById('simDeath')) {
@@ -3949,7 +3980,8 @@ function saveSim() {
   const sim = {
     id: Date.now().toString(),
     name,
-    avatar: document.getElementById('simAvatar').value.trim() || '',
+    gender: selectedGender,
+    avatar: document.getElementById('simAvatar').value.trim() || getSimEmoji(selectedGender, selectedStage),
     stage: selectedStage,
     career: document.getElementById('simCareer').value,
     career_level: parseInt(document.getElementById('simCareerLevel').value),
